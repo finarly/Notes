@@ -1,0 +1,71 @@
+Project Governance
+
+Framework for making decisions regarding the project for successful delivery of the piece of work you are responsible for.
+
+Governance answer question: to whom will I be reporting? It guides essential project communication. (Could be to one person, or a group of people)
+
+1. A tool to help consultant set up a framework for successful delivery
+2. Is an artefact for Risk Mitigation of project (Governance should be framed around risk)
+
+Project management = risk management
+
+Governance size and complexity is dictated by the risk of project failure.
+
+Identifying stakeholders is important as that will answer the question of ‘whom’ you will be answering to. Consultants needs to have an appropriate relationship with all stakeholders. Stakeholders usually are: interested parties, finance, other users , audit, IT Dept, Vendors, other consultancies. Understand who is on the steering group, and why particular people are/are not on the steering group, perhaps you might need to bring people onto the steering group if they can have significant influence/knowledge.
+
+Servian management needs to know what you’re up to, and be regarded as a very important stakeholder.
+
+Governance is good for the health of your project and you. Governance is how you share responsibility by let people know where you are up to and what you are doing. Stakeholders can help you and guide you and provide feedback.
+
+Initial Risk assessment (quick and simple, should not take a lot of time):
+
+- Number/quality of stakeholders (how useful are they at guiding you through risk)
+- Number of project team members (bigger team, bigger risk)
+- Business complexity - existing IP (low if you can get people that understand the business, high if there are none)
+- Technical complexity - existing IP (low if you can get people that understand the tech, high if there are none)
+- Size (examples)
+  - Number of functions
+  - Number of data entities
+  - Budget
+  - Number of interfaces
+  - Budget duration
+- Known risks/issues
+  - How many different external vendors are there?
+  - Conflict of interests amongst the stakeholders
+- How much exploration has been done for this project
+- Artefacts
+  - Risk/issues register, Project Steering Group, RASCI Matrix
+
+Scope management (make sure everyone understands early on in the project)
+
+- How will scope be understood and documented
+- What is the agreed approach to scope change
+- Before scope changes are accepted there should be:
+  - Business impact assessment
+  - Technical impact assessment
+  - Overall impact on the plan baseline
+
+Scheduling: provides the consultant with the means to communicate information about a project (what, when, duration). it is your safety net. Basic skills:
+
+- Estimating and contingency management (Need to estimate even if they are perfect, but bad estimating creates bad bad schedule.)
+- Resourcing
+- Deliverables and quality management (Should account how much work to do to ensure quality of what you produce)
+- Milestone/sprint management
+- Quality assurance (what method was used in estimation? Has quality assurance been taken into account in scheduling)
+
+Controlling: once the project commences execution phase, governance demands control over progress, which is recorded with honesty and clarity. You want strong relationships with all your stakeholders/team members, so that they can be honest and clear. Basic:
+
+- Managing stakeholder relationships (who you report to)
+- Working with team members (who tells you about progress)
+- Recording actual progress
+- Estimate to complete (scheduling estimate is different, this is after you’ve receive more information after starting the project)
+- Managing deliverables and quality
+- Status reporting (Important to illustrate control by status report to give stakeholders confidence. Reach agreement with stakeholders on what is in status report and how often)
+  - Actual vs approved plan
+    - Budget
+    - Effort
+    - Schedule
+    - Forecast
+  - Risk and issue management
+  - Changes management
+  - Documentation creation
