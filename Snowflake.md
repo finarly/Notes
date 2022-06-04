@@ -20,9 +20,15 @@ Virtual warehouse enable compute scaling
 
 ## Pricing Overview
 - Pricing is based on the amount of data stored and the amount of compute used. Since compute and storage is decoupled, they can be billed separately
-- Storage is charged monthly, and is based on the average data stored
-- Compute is calculated via credits 
 - No cost for data transfer into Snowflake, but it costs to transfer out of Snowflake or between regions 
+- 
+### Storage
+- Storage is charged monthly, and is based on the average data stored per month
+- Storage cost is calculated after compression
+### Compute
+- Compute is calculated via credits 
+- Credits are only used when virtual warehouses are in compute state
+- Rate of consumption is dependent on the size of the virtual warehouse
 
 ## What is the purpose of warehouse?
 An analytical DB that collects all data in single location through ETL or ELT process. Within DB data is organised into several different layers to make it easier to maintain. 
