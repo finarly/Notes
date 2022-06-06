@@ -82,14 +82,62 @@ The Stage is an area external to the db, the db in our case SnowFlake, but that 
     - Specify the file names to be loaded 
     - Use pattern matching to load only files matching the pattern
 
-- JSON data
+1. JSON data
     - Stage the data: Make JSON available in SF stage
-- Load as raw into temp table
-    - Load the JSON data as raw string into a temporary table with a column of variant data type (can contain any type of data)
-- Analyse and prepare
+2. Load as raw into temp table
+    - Load the JSON data as raw string into a temporary table with one column of variant data type (can contain any type of data)
+3. Analyse and prepare
     - Using SQL, analyse the JSON and prepare for flattening the structure. Use flatten function by SF
-- Flatten & Load
+4. Flatten & Load
     - Flatten & load into the target table
-- Regular updates
-    - Regular updates to the data may require delta detection
-    * Delta detection is a task that compares new data from a source system against last versions of data in the data warehouse to find out whether a new version has to be created  
+5. Regular updates
+    - Regular updates to the data may require delta detection (Delta detection is a task that compares new data from a source system against last versions of data in the data warehouse to find out whether a new version has to be created)
+
+
+## Snowpipe
+- It it used by SF to load high frequency or streaming data
+- Used usually when there's data continuously arriving, like transactions or events that needs to be made available to business immediately
+- Serverless so you dont need a virtual warehouse and is separately billed too
+
+### How does it work?
+- Snowpipe definitions contain a COPY statement which is used by SF to load the data so it knows what data to load and where to load it to
+- it can be automatically or manually triggered to upload data.
+
+### Steps
+1. Stage the data: S3
+2. Test copy command: Create target table & validate your copy into command
+3. Create pipe: Create pipe and provide copy command
+4. Configure cloud event: 
+    - Use cloud native event triggers to trigger snow pipe (preferable | has no GCP option currently). OR
+    - Use REST API endpoints (GCP friendly)
+
+## Performance optimisation
+SF was designed for simplicity so provides limited options in performance optimisation. Options on SF for optimisation:
+
+1. Splitting files to appropriate sizes
+2. Assigning app data types
+3. Optimising virtual warehouses
+4. Introduce cluster keys to large tables
+
+### Consideration
+
+- Running SF for large number of users: Use dedicated virtual warehouses for users with similar workloads
+    1. Identify and categorise workloads executing on your SF e.g. ETL, DataS, BI, AdHoc
+        - Dont go too fine grain with categorisation, creating many vw can speed up your processes, but having lots of vw increases risks of under utilisation which will drive up costs
+        - Should be a regular activity to keep these groups updated
+    2. Identify your users and put them into those groups
+    3. Create dedicated vw for these classification 
+- Scaling up virtual warehouses: use for peak processing period
+    - Increasing size of vw as response to change in workloads, this could be on an adhoc basis or could be based on a pattern
+    - Sizing up is usually used where query complexity has increased. If number of users increase, these queries increases exponentially so scale out may be better option
+- Scaling out for unknown & unexpected workloads: Use auto spawn virtual warehouses based on workloads
+    - Also known as multi cluster warehouses, spawning new vw and directing user to new vw and shutting down when demand decreasese is all automated
+    - Requires setting minimum or maximum number of vw
+    - Advantage over adding new vw on demand, since if you opt for manually add new vw, you need to redirect users to new vw. 
+- Design to maximise cache usage: cache is automatic, but can be maximised. Group users that use similar data a lot and make them use same virtual warehouse
+    - Automatic in SF and turned on by default
+    - Results are cached for 24hours and if underlying data has changed SF can detect and will therefore re-execute query
+    - To maximise cache usage, ensure similar queries go to the same virtual warehouse
+- Use cluster keys to partition large tables: For tables that have very large data use cluster keys to improve query performance
+
+
