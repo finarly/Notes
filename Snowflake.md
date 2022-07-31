@@ -41,7 +41,7 @@ An analytical DB that collects all data in single location through ETL or ELT pr
     - summary data
     - access layer
 
-When data enters the data warehouse, it usually doesnt go straight to the raw layer, but enters a staging area first (a transient and temp storage before it is loaded). A staging area can be in the DW (internal stage) or outside of the DW (external stage).
+When data enters the data warehouse, it usually doesn't go straight to the raw layer, but enters a staging area first (a transient and temp storage before it is loaded). A staging area can be in the DW (internal stage) or outside of the DW (external stage).
 
 ## Snowflake architecture - hybrid
 - Shared disk: Similar to shared disk SF uses a central data repository (uses single copy of data)
@@ -139,5 +139,39 @@ SF was designed for simplicity so provides limited options in performance optimi
     - Results are cached for 24hours and if underlying data has changed SF can detect and will therefore re-execute query
     - To maximise cache usage, ensure similar queries go to the same virtual warehouse
 - Use cluster keys to partition large tables: For tables that have very large data use cluster keys to improve query performance
+    SF maintains micro partitions for a table automatically and it most cases that is enough, but over time as table grows very large, and new data comes in this partitioning may not remain most optimal. Normally you would use those columns in cluster keys which are frequently used in WHERE clauses or are frequently used in JOINS or ORDER BY
+    - Clustering is not for all tables, generally large multi terabyte size will benefit
+    - Clustering can be used on:
+        - Single/multiple column in your clustering statement
+        - Expressions
+            - e.g. If your table has a transaction date but most of your queries uses MONTH
+
+
+## Time travel
+
+Access historical data by traveling back to a point in time up to 90 days. You can time travel for databases, schemas, and tables. 
+
+## Failsafe
+
+A continuous data protection that is separate from time travel feature, that ensures data protection in event of failure. It provides a 7 day period during which historical data is recoverable by SF. The failsafe starts immediately after time travel ends, and the data can only be recovered by SF support.
+
+Table types:
+  - Permanent table: Default table type
+    - Time travel: up to 90
+      Failsafe: 7 days
+  - Temporary table: Pure temporary tables and only exist for lifetime of a session. They are not visible to other sessions and are removed immediately once session ends. 
+    - Time travel: up to 1
+      Failsafe: 1 day
+  - Transient table: Sort of temp tables but they persist between sessions. They are designed to hold temp data that needs to be accessed across sessions e.g. ETL jobs (one ETL job writing to a table, and another job reading from that)
+    - Time travel: up to 1
+      Failsafe: 1 day
+
+## Zero Copy Cloning & Time Travel
+
+In most data warehouses, in order to copy you'll need to create the structure and then insert the data in it. SF has ZCC which creates a copy of db, schema, or table, but it doesn't replicate the data, it is a metadata operation where a snapshot of the original data is made available to the cloned project. The cloned object is independent and can be independently modified. 
+
+A cloned object shares the original object's data until the data starts getting modified in either object.
+
+You can also clone a database, schema, or table while time traveling. 
 
 
