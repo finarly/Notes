@@ -186,9 +186,13 @@ Sharing is:
 ### Sharing with SF users
 
 > CREATE SHARE ***SHARE_OBJECT***
+
 > GRANT USAGE ON DATABASE ***DB*** TO SAHRE ***SHARE_OBJECT***
+
 > GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+
 > ALTER SHARE ***SHARE_OBJECT*** ADD ***ACCOUNT=***
+
 > GRANT SELECT ON TABLE ***TABLE*** TO SHARE ***SHARE_OBJECT***
 
 example:
@@ -203,11 +207,17 @@ example:
 - Configure VW for reader account (user small Vw)
 
 > CREATE SHARE ***SHARE_OBJECT***
+
 > GRANT USAGE ON DATABASE ***DB*** TO SAHRE ***SHARE_OBJECT***
+
 > GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+
 > ALTER SHARE ***SHARE_OBJECT*** ADD ***ACCOUNT=***
+
 > CREATE MANAGED ACCOUNT ***ACCOUNT***
+
 > ADMIN_NAME = ***NAME*** , ADMIN_PASSWORD = ***PASSWORD***
+
 > TYPE = READER
 
 > ALTER SHARE ***TABLE*** ADD ***ACCOUNT=***
@@ -292,7 +302,9 @@ Used mainly for creating and managing users, roles, and the creation management 
 
 e.g. 
 > CREATE ROLE ***ROLE***
+
 > GRANT ROLE ***ROLE*** TO ROLE ***HIGHER_ROLE***
+
 > GRANT ROLE ***HIGHER_ROLE*** TO ROLE SYSADMIN
 
 ### SYS ADMIN
