@@ -244,6 +244,61 @@ example:
 
 > GRANT SELECT ON VIEW ***VIEW*** TO SHARE ***SHARE_OBJECT***
 
+## Snowflake Access Management
+
+Access control makes sure that only appropriate people have access. 
+
+- Discretionary Access Control (DAC)
+    - Each object has an owner and can grant access to that object
+- Role Base Access Control (RBAC)
+    - Access is through roles. Role are granted privileges and then the roles are granted to users & other roles
+
+e.g.
+
+> CREATE USER ***USER*** PASSWORD = "***PASSWORD***" DEFAULT_ROLE ***ACCOUNTADMIN*** MUST_CHANGE_PASSWORD = ***TRUE***
+> GRANT ROLE ***ACCOUNTADMIN*** TO USER ***USER***
+
+- Key Concept
+    - User: human or machine
+    - Role: An entity which privileges are granted
+    - Privilege: level of access to an object
+    - Securable Object: objects on which access can be granted e.g. tables, views etc
+
+- SF provided roles:
+    - SECURITY ADMIN:
+        - Role that is used to create, monitor, and manage users and roles
+    - SYS ADMIN:
+        - Role which has rights to create DB, tables, warehouses and other objects
+    - PUBLIC:
+        - Default role
+    - CUSTOM ROLES:
+        - new roles can be defined by SECURITY ADMIN and is cannot be automatically granted and must be granted explicitly
+
+### ACCOUNT ADMIN
+
+Most powerful role, assignment of role should be very limited but assign at least 2 people in the organisation and this role should use 2FA. It encapsulates SECURITY ADMIN & SYS ADMIN
+
+It can:
+- View and manage all objects
+- View billing and credit data
+- Stop any SQL statements
+- Perform other account level activities like creating reader accounts 
+
+Don't use this role to create objects unless you ***HAVE*** to.
+
+### SECURITY ADMIN
+
+Used mainly for creating and managing users, roles, and the creation management of privileges. 
+
+e.g. 
+> CREATE ROLE ***ROLE***
+> GRANT ROLE ***ROLE*** TO ROLE ***HIGHER_ROLE***
+> GRANT ROLE ***HIGHER_ROLE*** TO ROLE SYSADMIN
+
+### SYS ADMIN
+
+Used for the creation and management of objects e.g. warehouses, DBS, tables & other objects. 
+
 
 
 
