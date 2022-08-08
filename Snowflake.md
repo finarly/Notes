@@ -185,8 +185,13 @@ Sharing is:
 
 ### Sharing with SF users
 
-> GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***TABLE***
-> ALTER SHARE ***TABLE*** ADD ***ACCOUNT=***
+> CREATE SHARE ***SHARE_OBJECT***
+> GRANT USAGE ON DATABASE ***DB*** TO SAHRE ***SHARE_OBJECT***
+> GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+> ALTER SHARE ***SHARE_OBJECT*** ADD ***ACCOUNT=***
+> GRANT SELECT ON TABLE ***TABLE*** TO SHARE ***SHARE_OBJECT***
+
+example:
 > CREATE DATABASE crm_data FROM SHARE <producer_account_number>.share_customer
 
 ### Sharing with non SF users
@@ -197,6 +202,10 @@ Sharing is:
 - Create database from share
 - Configure VW for reader account (user small Vw)
 
+> CREATE SHARE ***SHARE_OBJECT***
+> GRANT USAGE ON DATABASE ***DB*** TO SAHRE ***SHARE_OBJECT***
+> GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+> ALTER SHARE ***SHARE_OBJECT*** ADD ***ACCOUNT=***
 > CREATE MANAGED ACCOUNT ***ACCOUNT***
 > ADMIN_NAME = ***NAME*** , ADMIN_PASSWORD = ***PASSWORD***
 > TYPE = READER
@@ -204,6 +213,37 @@ Sharing is:
 > ALTER SHARE ***TABLE*** ADD ***ACCOUNT=***
 
 ### Sharing complete DBs and Schema
+
+> CREATE SHARE ***SHARE_OBJECT***
+
+- grant usage on the database in which our table is contained
+>GRANT USAGE ON DATABASE ***DB*** TO SHARE ***SHARE_OBJECT***
+
+- grant usage on the schema in which our table is contained
+>GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+
+- grant select on all tables in this database, if a table is added at a later stage, that will not be shared
+>GRANT SELECT ON ALL TABLES in schema ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+
+> ALTER SHARE ***SHARE_OBJECT*** ADD ***ACCOUNT=***
+
+> CREATE DATABASE ***DB*** FORM SHARE ***SHARE_OBJECT***
+
+### Sharing view 
+
+> CREATE SHARE ***SHARE_OBJECT***
+
+- grant usage on the database in which our table is contained
+>GRANT USAGE ON DATABASE ***DB*** TO SHARE ***SHARE_OBJECT***
+
+- grant usage on the schema in which our table is contained
+>GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***SHARE_OBJECT***
+
+- View requires this grant 
+> GRANT REFERENCE_USAGE ON DATABASE ***DB*** TO SHARE ***SHARE_OBJECT***
+
+> GRANT SELECT ON VIEW ***VIEW*** TO SHARE ***SHARE_OBJECT***
+
 
 
 
