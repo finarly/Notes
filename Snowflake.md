@@ -174,4 +174,43 @@ A cloned object shares the original object's data until the data starts getting 
 
 You can also clone a database, schema, or table while time traveling. 
 
+## Sharing data
+
+Historically sharing data has been troublesome. SF has a structure which enables sharing with minimal effort, it can be shared ***without extracting data***. Shared data can by used by the consumers by using their own compute resources (any updates to the data will be reflected to the consumer because the data is shared in place), or if that are a non SF user, they can get shared data through reader accounts (non SF users use your organisations compute resources).
+
+Sharing is:
+- Instantaneous
+- Up to date
+- Secure & Governed
+
+### Sharing with SF users
+
+> GRANT USAGE ON SCHEMA ***SCHEMA*** TO SHARE ***TABLE***
+> ALTER SHARE ***TABLE*** ADD ***ACCOUNT=***
+> CREATE DATABASE crm_data FROM SHARE <producer_account_number>.share_customer
+
+### Sharing with non SF users
+
+- Create new reader account 
+- Share data with reader account
+- Create users in user account 
+- Create database from share
+- Configure VW for reader account (user small Vw)
+
+> CREATE MANAGED ACCOUNT ***ACCOUNT***
+> ADMIN_NAME = ***NAME*** , ADMIN_PASSWORD = ***PASSWORD***
+> TYPE = READER
+
+> ALTER SHARE ***TABLE*** ADD ***ACCOUNT=***
+
+### Sharing complete DBs and Schema
+
+
+
+
+
+
+
+
+
 
