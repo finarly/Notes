@@ -28,13 +28,33 @@ These were created when storage was expensive, and they use the idea of normalis
 
 ### Modularity
 
+Modularity is the degree to which a system's components may be separated and recombined.
+
 Building a final product piece by piece and combining them rather than all at once. So after you have transformed the data into a "model" you can use it again later on.
  
 ### Model Naming Conventions
 
 #### 1. Sources
 
-Arent actually models, its a way of referencing raw tables that are actuall loaded. 
+Arent actually models, its a way of referencing raw tables that are actually loaded. 
+
+Raw tables can be referenced like *raw.jaffle_shop.customers*
+
+But better practice would be configuring it in a yaml file 
+
+e.g.
+
+>version: 2
+>sources:
+>  - name: jaffle_shop
+>    database: raw
+>    schema: jaffle_shop
+>    tables:
+>      - name: orders
+>        loaded_at_field: _etl_loaded_at
+>        freshness:
+>          warn_after: {count: 12, period: hour}
+>          error_after: {count: 24, period: hour}
 
 #### 2. Staging
 
