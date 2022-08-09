@@ -43,7 +43,8 @@ Raw tables can be referenced like *raw.jaffle_shop.customers*
 But better practice would be configuring it in a yaml file 
 
 e.g.
-'''
+
+```
 version: 2
 
 sources:
@@ -56,7 +57,7 @@ sources:
         freshness:
           warn_after: {count: 12, period: hour}
           error_after: {count: 24, period: hour}
-'''
+```
 #### 2. Staging
 
 To clean and standardise the data, should be build 1 to 1 with source tables
