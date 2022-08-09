@@ -275,10 +275,6 @@ e.g.
     - Securable Object: objects on which access can be granted e.g. tables, views etc
 
 - SF provided roles:
-    - SECURITY ADMIN:
-        - Role that is used to create, monitor, and manage users and roles
-    - SYS ADMIN:
-        - Role which has rights to create DB, tables, warehouses and other objects
     - PUBLIC:
         - Default role
     - CUSTOM ROLES:
@@ -310,6 +306,21 @@ e.g.
 ### SYS ADMIN
 
 Used for the creation and management of objects e.g. warehouses, DBS, tables & other objects. 
+
+e.g.
+
+GRANT OWNERSHIP ON SCHEMA ***SCHEMA*** TO ROLE ***ROLE***
+GRAND OWNERSHIP ON DATABASE ***DB*** TO ROLE ***ROLE***
+
+### CUSOM
+
+These roles are secreated by the SECURITY ADMIN, and it is recommended to create a hierarchy of roles leading up to SYSADMIN. This allows SYSADMIN to administer to anything created by these roles.
+
+### PUBLIC 
+
+Role automatically given to all users, its the default role. Things created by the PUBLIC role can be accessed by everyone from the system.
+
+
 
 
 
