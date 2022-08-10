@@ -205,3 +205,6 @@ One of the following values:
 DAG (directed acyclic graph) is automatically generated (through ref function) to show flow of data from source to final models.
 
 ## Deployment
+
+Running a set of commands on a schedule that powers your business. There is usually a dedicated production branch (master or main), a dedicated production schema (e.g. dbt_production). 
+
