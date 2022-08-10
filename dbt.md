@@ -17,7 +17,7 @@ It is shaping of the data from raw data through to your final transformed data. 
 - Add .sql extension to files under Models folder
 - materialize="table" in config makes dbt buid table rather than view
 
-### Traditional Modelling
+## Traditional Modelling
 
 - Star schema
 - Kimball
@@ -26,15 +26,15 @@ It is shaping of the data from raw data through to your final transformed data. 
 These were created when storage was expensive, and they use the idea of normalised modelling, where the number of times of data is limited in duplication. 
 
 
-### Modularity
+## Modularity
 
 Modularity is the degree to which a system's components may be separated and recombined.
 
 Building a final product piece by piece and combining them rather than all at once. So after you have transformed the data into a "model" you can use it again later on.
  
-### Model Naming Conventions
+## Model Naming Conventions
 
-#### 1. Sources
+### 1. Sources
 
 Arent actually models, its a way of referencing raw tables that are actually loaded. 
 
@@ -58,23 +58,23 @@ sources:
           warn_after: {count: 12, period: hour}
           error_after: {count: 24, period: hour}
 ```
-#### 2. Staging
+### 2. Staging
 
 To clean and standardise the data, should be build 1 to 1 with source tables
 
-#### 3. Intermediate
+### 3. Intermediate
 
 Exist between staging and final models, and be built on staging models (not source). You might want to hide these from final users. 
 
-#### 4. Fact
+### 4. Fact
 
 Skinny table that represent things that have occured or are occuring. Things that will keep happening over time e.g. clicks, events 
 
-#### 5. Dimension
+### 5. Dimension
 
 Things are exist, things that are e.g. customer, user, products 
 
-### Testing
+## Testing
 
 dbt allows scaling of tests accross the project so you get coverage and you can find out when things break.
 
@@ -82,7 +82,12 @@ Tests are assertions you have about your data. It is critical that these asserti
 
 Testing at scale is difficult, but dbt can do it with: 
 
-> dbt test -s
+'''
+dbt test runs all tests in the dbt project
+dbt test --select test_type:generic
+dbt test --select test_type:singular
+dbt test --select one_specific_model
+'''
 
 You can write a test which will test against models in development, and as the model gets pushed to production, the test can continuously scheduled to run against the model. 
 
@@ -118,24 +123,85 @@ models:
                 - placed
 ```
 
-#### Singular test
+### Singular test
 
 Very specific, apply to probably 1 or 2 models. 
 
-#### Generic test
+### Generic test
 
 Very simple and scalable tests. You can either use packages, write your own, or use the ones that dbt innately have:
 
 - unique
 - not_null
 - accepted_values: value in column is one of the provided values
-- relationships
+- relationships: tests to ensure that every value in a column exists in a column in another model
 
 
+## Documentation
 
+dbt tries to put the code and the documentation as close as possible, in the yml in the dbt repo. You can use **description** as one of the levels in the yml file. This can be just a string, or it can reference a markdown file with more detailed description (Doc Block). Description can be added on a database & schema, table, or column level.
 
+```
+version: 2
 
+models:
+  - name: stg_customers
+    description: Staged customer data from our jaffle shop app.
+    columns: 
+      - name: customer_id
+        description: The primary key for customers.
+        tests:
+          - unique
+          - not_null
 
+  - name: stg_orders
+    description: Staged order data from our jaffle shop app.
+    columns: 
+      - name: order_id
+        description: Primary key for orders.
+        tests:
+          - unique
+          - not_null
+      - name: status
+        description: "{{ doc('order_status') }}"
+        tests:
+          - accepted_values:
+              values:
+                - completed
+                - shipped
+                - returned
+                - placed
+                - return_pending
+      - name: customer_id
+        description: Foreign key to stg_customers.customer_id.
+        tests:
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_id
+```
 
+To update documentation:
 
+> dbt docs generate
 
+Doc block:
+
+```
+{% docs order_status %}
+	
+One of the following values: 
+
+| status         | definition                                       |
+|----------------|--------------------------------------------------|
+| placed         | Order placed, not yet shipped                    |
+| shipped        | Order has been shipped, not yet been delivered   |
+| completed      | Order has been received by customers             |
+| return pending | Customer indicated they want to return this item |
+| returned       | Item has been returned                           |
+
+{% enddocs %}
+```
+
+DAG (directed acyclic graph) is automatically generated (through ref function) to show flow of data from source to final models.
+
+## Deployment
