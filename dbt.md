@@ -74,3 +74,68 @@ Skinny table that represent things that have occured or are occuring. Things tha
 
 Things are exist, things that are e.g. customer, user, products 
 
+### Testing
+
+dbt allows scaling of tests accross the project so you get coverage and you can find out when things break.
+
+Tests are assertions you have about your data. It is critical that these assertions are true.
+
+Testing at scale is difficult, but dbt can do it with: 
+
+> dbt test -s
+
+You can write a test which will test against models in development, and as the model gets pushed to production, the test can continuously scheduled to run against the model. 
+
+e.g.
+
+> models/staging/jaffle_shop/stg_jaffle_shop.yml
+
+```
+version: 2
+
+models:
+  - name: stg_customers
+    columns: 
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values:
+                - completed
+                - shipped
+                - returned
+                - return_pending
+                - placed
+```
+
+#### Singular test
+
+Very specific, apply to probably 1 or 2 models. 
+
+#### Generic test
+
+Very simple and scalable tests. You can either use packages, write your own, or use the ones that dbt innately have:
+
+- unique
+- not_null
+- accepted_values: value in column is one of the provided values
+- relationships
+
+
+
+
+
+
+
+
+
