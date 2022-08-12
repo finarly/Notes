@@ -192,4 +192,39 @@ Example structure:
 
 ## 5. Centralising transformations & splitting up models
 
-- Staging models
+1. Staging models
+
+Look at sources, ignoring the import CTEs, staging CTE aim to transform just the source without any joins. 
+
+2. Marts model
+
+These CTEs conduct joins.
+
+3. Remove redundant CTEs
+
+Remove any redudant CTEs that have already been covered in the previous 2 steps. Also replace any references to removed CTEs
+
+4. Moving transformation from Marts to Staging
+
+If the transformation can be done with done data set (pre-join), and if it is done on a field whose value is not due to a join, move the transformation to the approviate CTE under --staging. 
+
+Make sure that when you move these, you are:
+- Removing redundant transformations
+- Re-referencing the CTE and field names correctly
+- Giving good names to fields that dont have a good name estabished
+
+5. Focusing on CTEs and moving logic to intermediate models
+
+6. Final Model
+
+## 6. Audting 
+
+Making sure that the data that we get now that the code is refactored is the same as the results before. 
+
+You can use packages to help audit. 
+
+To install package, include package in package.yml file and run
+
+> dbt deps
+
+to install the package.
