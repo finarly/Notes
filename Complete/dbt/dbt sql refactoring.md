@@ -192,6 +192,8 @@ Example structure:
 
 ## 5. Centralising transformations & splitting up models
 
+For more detailed breakdown [Refactoring SQL]()
+
 1. Staging models
 
 Look at sources, ignoring the import CTEs, staging CTE aim to transform just the source without any joins. 
