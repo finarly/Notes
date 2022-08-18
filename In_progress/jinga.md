@@ -1,26 +1,29 @@
-# Jinga, Macros, and Packages
+# Jinja
 
-## What is Jinga?
+## What is Jinja?
 
-dbt is powered by SQL (for data transformations), yaml (configuring, documentating, and testing data transformation), and jinga (templating and lineage).
+dbt is powered by SQL (for data transformations), yaml (configuring, documentating, and testing data transformation), and Jinja (templating and lineage).
 
-Jinga is a python based templating language that boosts up your SQL functionality. It uses two types of syntaxes. 
+Jinja is a python based templating language that boosts up your SQL functionality. It uses two types of syntaxes. 
 
 ```
 {% for i range (10) %}
 
     My favourite number is {{ i }}
+
 {% endfor %}}
 ```
 
-"{%" means some operation is happening in the jinga context 
-"{{" means we're pulling something out of the jinga context
+"{% ... %}" means some operation is happening in the Jinja context 
+"{{ ... }}" means we're pulling something out of the Jinja context
 
 An example is what emails use to fill names of recipients. 
 
 This is seen in the ref function:
 
 > {{ ref('stg_orders') }}
+
+## Jinja basics
 
 ### Setting variables
 
@@ -37,8 +40,11 @@ This will set the variable
 
 This will print the variable
 ```
-{{ example_string }}
+{{ example_string }} 
+> wowza
+
 And then I said {{ example_string }}
+> And then I said wowza
 ```
 
 #### List
@@ -51,8 +57,74 @@ And then I said {{ example_string }}
 
 > tiger 
 
+#### Dictionary
+
+(% set websters_dict = {
+    'word': 'data',
+    'type': 'noun',
+    'definition': 'abc'
+} %)
+
 ### Comment
 
 > {# ... #}
 
+### For loop
+
+```
+{% for i range (10) %}
+
+    My favourite number is {{ i }}
+
+{% endfor %}}
+```
+
+### If..else...then statement
+
+```
+{% set temperature = 75 %}
+{% if temperature <65 %}
+    Time for a cappucino!
+{% else %}
+    Time for a cold brew!
+{% endif %}
+```
+
+### Remove whitespace
+
+To remove whitespace as our code gets translated to whitespace in the output, add a '-' sign next to the '%' in the Jinja blocks.
+
+e.g.
+
+```
+{%- set temperature = 75 -%}
+```
+
+# Macros
+
+## What are macros?
+
+Macros allow you to write generic logic which can then be reuseable. It's like modularising dbt models or creating functions in a file and calling it in another file. 
+
+1. Create new file under macro folder
+
+2. Example
+
+``` 
+{% macro cents_to_dollars(column_name, decimal_places) %}
+round( 1.0* {{ column_name }}/100, {{ decimal_places }})
+{% endmacro %}
+```
+
+3. In SQL code, call the function as
+
+```
+{$ cents_to_dollars('amount', 4) %}
+```
+
+4. The above example is probably unnecessary as it makes it harder than the original code which was 
+
+```
+amount/100
+```
 
