@@ -9,7 +9,8 @@ Jinga is a python based templating language that boosts up your SQL functionalit
 ```
 {% for i range (10) %}
 
-    select {{ i }}...
+    My favourite number is {{ i }}
+{% endfor %}}
 ```
 
 "{%" means some operation is happening in the jinga context 
@@ -28,9 +29,11 @@ We can use basic python data objects: dictionary, list, simple variables
 #### Simple variable
 
 This will set the variable
-> {% set example_string = 'wowza' %}
+```
+{% set example_string = 'wowza' %}
 
-> {% set example_number = 100 %}
+{% set example_number = 100 %}
+```
 
 This will print the variable
 ```
@@ -40,11 +43,14 @@ And then I said {{ example_string }}
 
 #### List
 
+```
 {% set my_animals = ['tiger', 'bear', 'wolf'] %}
 
 { my_animals[0] }
+```
 
 > tiger 
+
 ### Comment
 
 > {# ... #}
