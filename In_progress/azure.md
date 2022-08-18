@@ -115,6 +115,7 @@ Managed, handling maintenance and any critical problems for you.
 Accessible from anywhere in the world over HTTP or HTTPS.
 
 ## Mobile
+
 With Azure, developers can create mobile back-end services for iOS, Android, and Windows apps quickly and easily. Features that used to take time and increase project risks, such as adding corporate sign-in and then connecting to on-premises resources such as SAP, Oracle, SQL Server, and SharePoint, are now simple to include.
 
 Other features of this service include:
@@ -125,6 +126,7 @@ Other features of this service include:
 - Autoscaling to match business needs.
 
 ## Databases
+
 Azure provides multiple database services to store a wide variety of data types and volumes. And with global connectivity, this data is available to users instantly.
 
 ### Azure Cosmos DB
