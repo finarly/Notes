@@ -128,3 +128,38 @@ round( 1.0* {{ column_name }}/100, {{ decimal_places }})
 amount/100
 ```
 
+## DRY vs readability
+
+Macros allows DRY code (Don't Repeat Yourself). Essentially everything is going to be tucked away in different files and its going to be hard to understand the logic times. Therefore you have to find a good middle point. 
+
+# Packages 
+
+When you're doing something, you might think "Someone's definitely done this or figured this out before, right?" that's when packages come in. Projects are ways to bring in **models and macros** into your project.
+
+Macros packages would be functions that are very helpful for your tables. 
+
+Model packages would be models that are built on top of popular data sets.
+
+## Installing packages 
+
+Create a file called "packages.yml" and include packages in there. There are some different ways to specify packages in yml file:
+
+1. Use dbt Hub
+2. Straight from GitHub
+3. From your local
+
+```
+packages:
+- packages: fivetran/github
+  version: 0.1.1
+- git: (GitHub URL)
+  revision: master
+- local: sub-project
+```
+
+This will install your packages: 
+> dbt deps
+
+# Advanced Jinja + Macros
+
+You can create Macro to grant privileges in dbt.
