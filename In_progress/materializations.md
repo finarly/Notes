@@ -56,7 +56,7 @@ Think about incremental models as an upgrade path:
 - If it tables too long to query, switch to using a table. It takes longer to build, but would be faster to query. 
 - When that takes too long to build, switch to using incremental model
 
-How to create incremental table:
+### How to create incremental table:
 
 1. We have to tell dbt to add new rows instead of recreating the table.
 - We need to use a different materialisation **materialized='incremental'**
@@ -70,12 +70,27 @@ where collector_tstamp >= (select max(max_collector_tstamp) from {{this}})
 {% endif %}
 ```
 - {{ this }} is the current existing database object mapped to this model. We use this because we don't want to ref and model to itself
-- is_incremental(): Checks 4 conditions 
+- is_incremental(): Checks 4 conditions, if the answers to below conditions are **Yes Yes Yes No** then this is an incremental run.
     - Does this model already exist ias an object in the database?
     - Is that database obkect a table?
     - Is this model configured with **materialized='incremental'**?
-    - Was the --full-refresh flas passed to this dbt run?
-  If the answers to above condition is **Yes Yes Yes No** then this is an incremental run.
-3. 
+    - Was the --full-refresh flag passed to this dbt run?
+
+### Utility of full-refresh run
+
+What if:
+1. Data showerd up in the data warehouse late? Cut off time might mean we miss these data.
+- We can widen the window to the last three days.
+```
+{% if is_incremental() %}
+where collector_tstamp >= (select dateadd('day', -3,max(max_collector_tstamp)) from {{this}})
+{% endif %}
+```
+- however...we'll get duplicate records. To fix this we change the configuration:
+'''
+{[ config(
+    materializied='incremental',
+    unique_key='page_view_id'
+)]}
 
 ## Snapshots
