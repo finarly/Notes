@@ -44,4 +44,8 @@ Don't exist in the database, it is like a reusable code snippet. dbt will interp
 
 ## 4. Incremental
 
+Keeping the old table, just adding the new records. 
+
+It costs time and money to transform data, and historical data doesnt generally change so you shouldn't re-transform historical data. 
+
 ## 5. Snapshots
