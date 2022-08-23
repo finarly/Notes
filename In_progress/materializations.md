@@ -51,4 +51,31 @@ Keeping the old table, just adding the new records.
 
 It costs time and money to transform data, and historical data doesnt generally change so you shouldn't re-transform historical data. 
 
+Think about incremental models as an upgrade path:
+- Start with view 
+- If it tables too long to query, switch to using a table. It takes longer to build, but would be faster to query. 
+- When that takes too long to build, switch to using incremental model
+
+How to create incremental table:
+
+1. We have to tell dbt to add new rows instead of recreating the table.
+- We need to use a different materialisation **materialized='incremental'**
+2. How do we identify new rows on "subsequent" runs only (not the first time table is built)?
+- We compare the source datta to the already-transformed data
+> select  max(max_collector_tstamp) from {{ ref('page_views') }}
+- To do so we can add an if cause using Jinja, so it 
+```
+{% if is_incremental() %}
+where collector_tstamp >= (select max(max_collector_tstamp) from {{this}})
+{% endif %}
+```
+- {{ this }} is the current existing database object mapped to this model. We use this because we don't want to ref and model to itself
+- is_incremental(): Checks 4 conditions 
+    - Does this model already exist ias an object in the database?
+    - Is that database obkect a table?
+    - Is this model configured with **materialized='incremental'**?
+    - Was the --full-refresh flas passed to this dbt run?
+  If the answers to above condition is **Yes Yes Yes No** then this is an incremental run.
+3. 
+
 ## Snapshots
