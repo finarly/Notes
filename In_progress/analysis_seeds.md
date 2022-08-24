@@ -17,7 +17,20 @@ Examples:
 - Country codes (US for America, AUS for Australia)
 - Employee id/emails
 
-Seeds are not designed for large or frequently changing data, you probably want to use an API for that.  
+Seeds are not designed for large or frequently changing data, you probably want to use an API for that.  Seeds are for files that don't change that often. 
 
-Seeds are for files that don't change that often. 
+To add test or description its similar to models, just create a yaml file **schema.yml**
+
+```
+version: 2
+
+seeds:
+    - name: employees
+      description: a manual map of employees to customers
+      columns:
+        - name: employee_id
+          tests:
+            - unique
+            - not null
+```
 
