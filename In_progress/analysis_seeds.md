@@ -34,3 +34,7 @@ seeds:
             - not null
 ```
 
+To run the test: 
+
+> dbt test --models employees 
+
