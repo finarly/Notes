@@ -175,3 +175,11 @@ Snapshots allow you to look at the changes done in a particular row. To create a
 - In subsequent runs, dbt will check records that have changed or if any new records have been created and the dbt_valid_to column will be updated for any existing records that have been changed, and updated records and any new records will be inserted into the snapshot table. These new records will now have **dbt_valid_to=null**
 
 These tables can be reference by using the ref function. 
+
+### Tips
+
+- Use the **timestamp** strategy where possible, it handles column additions and deletions better than the **check_cols** strategy.
+- Ensure your unique key is truly unique as that is what dbt uses to match up rows
+- Use a target schema that is separate to your analytics schema because snapshots cannot be rebuilt, so its better to put it in a separate schema for end users to know that they are special. 
+- Snapshot source data 
+- Keep query as possible 
