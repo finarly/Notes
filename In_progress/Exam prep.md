@@ -59,7 +59,7 @@ It has:
 - **error_after**
 If neither are provided then dbt won't calculate freshness.
 
-Addtionally, the **loaded_at_field** is requred to calculate freshness for a table, if it isnt provided then freshness wont be caluclated. 
+Additionally, the **loaded_at_field** is required to calculate freshness for a table, if it isn't provided then freshness wont be calculated. 
 
 Freshness blocks are applied hierarchically:
 - a freshness and loaded_at_field property added to a source will be applied to all all tables defined in that source
@@ -92,7 +92,7 @@ sources:
 
 ### identifier
 
-The table name as stored in the database. By default dbt will use the table's **name:** but the identifier parameter is useful if you want to use a source table name that differs from the table name in the database. 
+The table name as stored in the database. By default dbt will use the table's **name:** but the identifier parameter is useful if you want to use a source table name that differs from the table name in the database.
 
 models/<filename>.yml
 ```
@@ -168,7 +168,7 @@ left join "raw"."jaffle_shop".customers using (order_id)
 
 ### schema
 
-The schema name as stored in the database. THis parameter is useful if you want to use a source name that differes from the schema name. by defualt dbt will use the source's **name:** parameter as the schema name.
+The schema name as stored in the database. This parameter is useful if you want to use a source name that differes from the schema name. By defualt dbt will use the source's **name:** parameter as the schema name.
 
 models/<filename>.yml
 ```
@@ -292,6 +292,12 @@ You can provide '--full-refresh' argument to dbt run, which will treat increment
 1. The schema of an incremental model changes and you need to recreated it
 2. You want to reprocess the entirety of the incremental model because of new logic in the model code.
 
+### run-operation
+
+e.g. 
+> dbt run-operation {macro} --args {args}
+The *dbt run-operation* command id used to invole a macro.
+
 ### test
 
 e.g.
@@ -409,7 +415,7 @@ They are not resources in and of themselves, and instead they are child properti
 - tests 
 - description
 
-As columns are not resources, *tags* and *meta* properties are not true configurations. They do not ingerit the *tags* or *meta* values of their parent resources. 
+As columns are not resources, *tags* and *meta* properties are not true configurations. They do not inherit the *tags* or *meta* values of their parent resources. 
 
 However, you can select a generic test, defined on a column, using tags applied to its column or top-level resources. 
 
@@ -595,6 +601,48 @@ Then, run:
 
 To use these .json files to populate a local website.
 
+### Using Docs Block
+
+To declare doc block, use Jinja *docs* tag. The Docs must be uniquely named, and can contain arbitrary markdown.
+
+e.g.
+```
+{% docs table_events %}
+
+This table contains clickstream events from the marketing website.
+
+The events in this table are recorded by [Snowplow](http://github.com/snowplow/snowplow) and piped into the warehouse on an hourly basis. The following pages of the marketing site are tracked:
+ - /
+ - /about
+ - /team
+ - /contact-us
+
+{% enddocs %}
+```
+The above docs block is named *table_events*.
+
+Doc blocks should be placed in files with a .md extension, and by default dbt will search in all resource paths for docs blocks (i.e. the combined list of model-path, seed-path, analysis-paths, macro-paths, and snapshot-paths). You can adjust this behaviour in the *docs-path* in dbt_project.yml file.
+
+### Setting custom overview
+
+The "overview" in the documentation website can be overridden by supplying your own docks block called *__overview__*. 
+
+## Set operators (unions and intersections)
+
+If space delineated arguments to *--select*, *--exclude*, or *--selector* flags selects **union** of them all. 
+
+e.g. 
+
+Run snowplow_sessions, all ancestors of snowplow_sessions, fct_orders, and all ancestors of fct_orders:
+> dbt run --select +snowplow_sessions +fct_orders
+
+On the other hand, if they are separated by commas, then dbt will only select resources which satisfy all arguments 
+
+e.g.
+
+Run all the common ancestors of snowplow_sessions and fct_orders:
+> dbt run --select +snowplow_sessions,+fct_orders
+
 
 ## Miscellaneous
 
@@ -609,3 +657,117 @@ drop table ...
 -- no-op
 {% endif %}
 ```
+
+### tags
+
+> dbt run --select tag:daily
+
+You can tag different resources in your dbt_project.yml (or to individual resources using a config block), and when run a tag when you do a dbt run.
+
+```
+models:
+  jaffle_shop:
+    +tags: "contains_pii"
+
+    staging:
+      +tags:
+        - "hourly"
+
+    marts:
+      +tags:
+        - "hourly"
+        - "published"
+
+    metrics:
+      +tags:
+        - "daily"
+        - "published"
+```
+### ancestors and descendents
+
+If a resource has a '+' before it e.g. +model, that is all the ancestors aof the resource and the resource itself.
+
+If a resource has a '+' after it e.g. model+, that is all the descendants of the resource and the resource it self.
+
+
+## How we structure our dbt projects
+
+### Why does structure matter?
+
+Analytics engineering is to help group of humans collaborate on making better decisions at a large scale. One foundational principle that applies to all dbt projects is moving data from source-conformed to business-conformed. Source conformed data is shaped by external systems out of our control, while business conformed data is shaped by the needs, concepts, and definitions we create.
+
+### Structure overview
+
+1. Models
+- Staging: atoms, initial modular mode from source data
+- Intermediate: adding layers of logic with clear and specific purposes to prepare our staging models to join into the entities we want
+- Marts: bringing together our modular pieces into a wide, rich vision of the entities our organisation cares about
+
+2. Other layers
+
+
+## dbt Project Checklist
+
+### dbt_project.yml
+
+- Project naming conventions
+  - What is the name of your project?
+    - Name it after your company 'Servian_analytics'
+    - If multiple do e.g.'Servian_analytics_marketing'
+
+- Unnecessary: 
+  - Materialised:view
+    - View is the default materialisation
+    - If all models in a folder are tables, define the materialisation on the dbt_project.yml file rather than on the model file. This removes clutter form the model file.
+
+- Are there a ton of placeholder comments from the init command?
+  - This is the default file that dbt will create for you, it is clutter. 
+
+- Do you use post-hooks to grant permissions to other transfers and BI users?
+  - If no, you should, this will ensure that any changes made will be accessible to your collaborators and be utilized on the BI layer. 
+
+- Are you utilising tags?
+  - Most of the model should be untagged, but you can use tags for models and tests that fall out of the norm with how you want to interact with them.
+
+- Are you utilising YAML selectors?
+  - These enable intricate, layered model selection and can eliminate complicated tagging mechanisms and improve the legibility of the project configuration.
+
+
+### Package Management
+
+- How up to date are your dbt Packages?
+  - You can check this by looking at your packages.yml file and comparing it to the packages hub page. 
+- Do you have the dbt_utils package installed?
+  - This is by far the most popular and essential package.
+
+### Code Style
+
+- Do you have a clearly defined code style?
+  - Are you following it strictly?
+- Are you optimising your SQL?
+  - Are you using window functions and aggregations?
+
+### Project structure
+
+- If you are using dimensional modeling techniques, do you have staging and marts models?
+  - Do they use table prefixes like 'fct_' and 'dim_'?
+- Is the code modular? is it one transformation per one model? 
+- Are you filtering as early as possible?
+  - One of the most common mistakes we have found is not filtering or transforming early enough. This causes multiple models downstream to have teh same repeated logic and makes updating business logic more cumbersome. 
+- Are the CTEs modular with one transformation per CTE?
+- If you have macro files, are you naming them in a way that clearly represent the macro(s) contained in the file?
+
+### dbt
+
+- Is dbt taking a long time to run? 
+  - Maybe consider Incremental strategy.
+- Do you use sources?
+  - Include a source freshness test.
+- Do you use refs and sources for everything?
+  - Make sure nothing is querying off of raw tables.
+- Do you use Jinja and Macros for repeated code?
+  - If you do make sure it isnt being overused to the point the code is not readable.
+- Is your Jinja easy to read?
+  - Put all your *set* statements at the top of the model files
+  - Format code for Jinja readbility
+  
