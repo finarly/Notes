@@ -799,7 +799,7 @@ Analytics engineering is to help group of humans collaborate on making better de
   - Are there any direct joins from source into an intermediate model?
     - All sources should have a corresponding staging model to clean and standardise the data structure.
 
-![1](../Images/1.jpeg)
+    ![1](../Images/1.jpeg)
 
   - Do sources join directly together?
     - All sources should have a corresponding staging model to clean and standardise the data structure. 
