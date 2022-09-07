@@ -769,5 +769,40 @@ Analytics engineering is to help group of humans collaborate on making better de
   - If you do make sure it isnt being overused to the point the code is not readable.
 - Is your Jinja easy to read?
   - Put all your *set* statements at the top of the model files
-  - Format code for Jinja readbility
+  - Format code for Jinja readability
   
+### Testing & COntinuous Integration
+
+- Do your models have tests?
+  - The ideal project has 100% test coverage on all of its models. While there are cases where this doesnt make sense, our rule of thumb is models should have at least a not_null/unique test on the primary-key.
+- What are you testing for? Does it make sense?
+- What are the assumptions you should be testing for?
+  - Think about business logic as well as your understanding of your sources.
+- Are you using pull requests/other forms of version control?
+  - How easy is it to understand what the code change and intention behind the code change do?
+- Do you have mandatory PR reviews before merging code to your dbt project or BI layer?
+
+### Documentation
+
+- Do you use documentation?
+- Are there descriptions for each model?
+- Are complex transformations and business logic explained in an easily accessible place?
+- Are your stakeholders using your documentation?
+  - If not, why?
+- Do you have a readme and regularly update it?
+- How easy would it be to onboard someone to your project?
+- If you have column-level descriptions, are you using doc blocks?
+
+### DAG Auditing
+
+- Does your DAG have any common modelling pitfalls?
+  - Are there any direct joins from source into an intermediate model?
+    - All sources should have a corresponding staging model to clean and standardise the data structure.
+  - Do sources join directly together?
+    - All sources should have a corresponding staging model to clean and standardise the data structure. 
+  - Are there any rejoining of upstream concepts?
+    - This may indicate:
+      - A model may need to be expanded so all the necessary data is available downstream
+      - A new intermediate model is necessary to join the concepts for use in both places
+  - Are there any "bending connections"?
+    - Are models in the same layer dependent on each other
