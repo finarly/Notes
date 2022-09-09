@@ -27,7 +27,7 @@ Source properties are declared in .yml files sitting in models/ directory. These
 
 Sources only support one configuration, enabled. They can be configured via a **config:** block within their .yml definitions, or from the dbt_project.yml file under the **sources:** key. 
 
-When a resource is disabled, dbt will not consider it as a part of your project, though this may cause compilation errors. IF you want to exclude sometha model in a particuaring 
+When a resource is disabled, dbt will not consider it as a part of your project, though this may cause compilation errors. IF you want to exclude some model in a particular run, consider using *--exclude* parameter
 
 This could be useful when you disable a model in a package to use your own, or to disable source freshness checks running on source tables from packages. 
 
@@ -121,7 +121,7 @@ Describe the tool that loads this source into your warehouse, this property is f
 
 ### quoting
 
-Optionally condigure whether dbt should quote databases, schemas, and identifiers when resolving a {{ source () }} function to a direct relation reference. 
+Optionally configure whether dbt should quote databases, schemas, and identifiers when resolving a {{ source () }} function to a direct relation reference. 
 
 models/<filename>.yml
 ```
@@ -168,7 +168,7 @@ left join "raw"."jaffle_shop".customers using (order_id)
 
 ### schema
 
-The schema name as stored in the database. This parameter is useful if you want to use a source name that differes from the schema name. By defualt dbt will use the source's **name:** parameter as the schema name.
+The schema name as stored in the database. This parameter is useful if you want to use a source name that differs from the schema name. By default dbt will use the source's **name:** parameter as the schema name.
 
 models/<filename>.yml
 ```
@@ -286,7 +286,7 @@ Arguments:
 - '--selector'
 - '--defer'
 
-It executes compiled sql model files against the current target database. dbt connects to the target database and runs the releveant SQL required to materialise all data models using the specified materialisation strategies. Models are run in the order defined by the dependency graph generated during compilation. Intelligent multi-threading (things running synchronously) is used to minimize execution time without violating dependencies.
+It executes compiled sql model files against the current target database. dbt connects to the target database and runs the relevant SQL required to materialise all data models using the specified materialisation strategies. Models are run in the order defined by the dependency graph generated during compilation. Intelligent multi-threading (things running synchronously) is used to minimize execution time without violating dependencies.
 
 You can provide '--full-refresh' argument to dbt run, which will treat incremental models as table models, and it is useful when
 1. The schema of an incremental model changes and you need to recreated it
@@ -296,7 +296,7 @@ You can provide '--full-refresh' argument to dbt run, which will treat increment
 
 e.g. 
 > dbt run-operation {macro} --args {args}
-The *dbt run-operation* command id used to invole a macro.
+The *dbt run-operation* command id used to involve a macro.
 
 ### test
 
@@ -345,12 +345,12 @@ Arguments:
 - '--exclude'
 - '--selector'
 
-Generates executable SQL form source model, test, and analysus files. You can find these compiled SQL files in the **target/** directory of your dbt project. 
+Generates executable SQL form source model, test, and analyses files. You can find these compiled SQL files in the **target/** directory of your dbt project. 
 
-The compile command is usefil for:
+The compile command is useful for:
 1. Visually inspecting the compiled output of model files. This is useful for validating complex jinja logic or macro usage. 
-2. Manually running compiled SQL. While debigging a model ro schema test, it's often useful to execute the underlying select statement to find the source of the bug. 
-3. Compiling analysrs files. 
+2. Manually running compiled SQL. While debugging a model ro schema test, it's often useful to execute the underlying select statement to find the source of the bug. 
+3. Compiling analysis files. 
 
 It is not a pre-requisite of dbt run.
 
@@ -379,13 +379,13 @@ Artifacts: build will create a single manifest and a single run results artifact
 Skipping on failures: Tests on upstream resources will block downstream resources from running, and a test failure will cause those downstream resources to skip entirely. E.g. if model_b depends on model_a, and a unique test on model_a fails, then model_b will SKIP. 
   
   - If you dont want a test to cause skipping then adjust severity or thresholds to *warn* instead of *error*.
-  -  In case of a test with multiple parents, where one parent depends on the other (e.g. a relationship test between model_a + model_b), that thest will block and skip children of the most downsteram parent only (model_b)
+  -  In case of a test with multiple parents, where one parent depends on the other (e.g. a relationship test between model_a + model_b), that these will block and skip children of the most downstream parent only (model_b)
 
-Selecting resources: the build task supports standard selection syntax (--select, --exclude, --selector), as well as a --resource-type flag thbat offers a final filter (just like *list*). WHichever resources are selected, those are the ones that build execute. 
+Selecting resources: the build task supports standard selection syntax (--select, --exclude, --selector), as well as a --resource-type flag that offers a final filter (just like *list*). WHichever resources are selected, those are the ones that build execute. 
 
-  - Tests support indirect selection, so dbt build -s model_a will both run and test model_a. What does thatt mean? Any tests that directly depend on model_a will be included, so long as those tests dont also depend on other unselected parents. 
+  - Tests support indirect selection, so dbt build -s model_a will both run and test model_a. What does that mean? Any tests that directly depend on model_a will be included, so long as those tests dont also depend on other unselected parents. 
 
-Flags: the build task supports all the same flags as run, test, snapshot, and seed. For flags that are shared between mutiple tasks (e.g. --full-refresh ), build will use the same value for all selected resource types (e.g. both models and seeds will be full refreshed)
+Flags: the build task supports all the same flags as run, test, snapshot, and seed. For flags that are shared between multiple tasks (e.g. --full-refresh ), build will use the same value for all selected resource types (e.g. both models and seeds will be full refreshed)
 
 ## General properties
 
@@ -409,7 +409,7 @@ models:
         ...
 ```
 
-They are not resources in and of themselves, and instead they are child properties of another resource type. They can define sub-properties that aresimilar to properties defined at the resource level:
+They are not resources in and of themselves, and instead they are child properties of another resource type. They can define sub-properties that are similar to properties defined at the resource level:
 - tags
 - meta 
 - tests 
@@ -524,7 +524,7 @@ Quoting may be relevant to using SnowFlake, when:
 
 Without setting *quote: true*:
 - Schema tests appleid to this column may fail due to invalid SQL
-- Documentation may nott render correctly, e.g. *group* and *"group"* may not be matched as the same column name.
+- Documentation may not render correctly, e.g. *group* and *"group"* may not be matched as the same column name.
 
 ### tests
 
@@ -552,7 +552,7 @@ models:
                 [<test_config>](test-configs): <config-value>
 ```
 
-Tests property defines assertions about a column, table, or view. The proeprty contains a list of generic tests, reference by name, which can include the four built-in gerneric tests available in dbt.
+Tests property defines assertions about a column, table, or view. The property contains a list of generic tests, reference by name, which can include the four built-in generic tests available in dbt.
 
 For example, you can tests so that a column contains no duplicates and zero null values. Any arguments or configurations passed to those test should be nested below the test name. 
 
@@ -585,7 +585,7 @@ dbt provdies a way to generate documentation for your dbt project adn render it 
     - Information about your project: including model code, a DAG of your project, any tests you've added to a column, and more
     - Information about your data warehouse: including column data types, and table sizes. This info is generated by running queries against the information schema. 
 
-dbt also provides a way to add descriptions to models, columns, sources, and more, to further enhancve your documentation.
+dbt also provides a way to add descriptions to models, columns, sources, and more, to further enhance your documentation.
 
 ### Generating project documentation
 
@@ -594,7 +594,7 @@ Docs can be generated by using CLI.
 Firstly, run:
 > dbt docs generate
 
-This tells dbt to compile relevabt information about your dbt project and warehouse into *manifest.json* and *catalog.json* files respectively. To see documentation for all columns and not just columns described in your project, ensure that you have created the models with *dbt run* beforehand. 
+This tells dbt to compile relevant information about your dbt project and warehouse into *manifest.json* and *catalog.json* files respectively. To see documentation for all columns and not just columns described in your project, ensure that you have created the models with *dbt run* beforehand. 
 
 Then, run:
 > dbt docs serve
@@ -689,6 +689,12 @@ If a resource has a '+' before it e.g. +model, that is all the ancestors aof the
 
 If a resource has a '+' after it e.g. model+, that is all the descendants of the resource and the resource it self.
 
+### What is CTE
+
+CTE stands for "Common Table Expression", which is a result set available for use until the end of SQL script execution. Using the *with* keyword at the top of a query allows us to use CTEs in our code.
+
+
+
 
 ## How we structure our dbt projects
 
@@ -771,7 +777,7 @@ Analytics engineering is to help group of humans collaborate on making better de
   - Put all your *set* statements at the top of the model files
   - Format code for Jinja readability
   
-### Testing & COntinuous Integration
+### Testing & Continuous Integration
 
 - Do your models have tests?
   - The ideal project has 100% test coverage on all of its models. While there are cases where this doesnt make sense, our rule of thumb is models should have at least a not_null/unique test on the primary-key.
@@ -828,3 +834,246 @@ Analytics engineering is to help group of humans collaborate on making better de
       - Is there repeated logic in multiple models?
         - This indicates an opportunity to move logic into upstream models or create specific intermediate models to make the logic reusable
         - One common place to look for this is complex join logic. For example, if you're checking multiple fields for certain specific values in a join, these can likely be condensed into a single field in an upstream model to create a clean, simple join.
+
+## Exposures
+
+Exposures make it possible to define and describe a downstream use of your dbt project, such as a dashboard, application, or data science pipeline. By defining exposures, you can then:
+  - run, test, and list resources that feed into your exposure
+  - populate a dedicated page in the auto-generated documentation site with context relevant to data consumers. 
+
+Exposures are defined in .yml files nested under an **exposures:** key.
+
+models/<filename>.yml
+```
+exposures:
+  
+  - name: weekly_jaffle_metrics
+    type: dashboard
+    maturity: high
+    url: https://bi.tool/dashboards/1
+    description: >
+      Did someone say "exponential growth"?
+    
+    depends_on:
+      - ref('fct_orders')
+      - ref('dim_customers')
+      - source('gsheets', 'goals')
+      
+    owner:
+      name: Claire from Data
+      email: data@jaffleshop.com
+```
+
+Available properties:
+
+- Required:
+  - name: must be unique among exposures and use snake case
+  - type: one of [dashboard, notebook, analysis, ml, application](used to organize in docs site)
+  - owner: email
+
+- Expected
+  - depends_on: list of refable nodes (ref + source)
+
+- Optional:
+  - url
+  - maturity: one of [high, medium, low]
+  - owner: name
+
+- General properties
+  - description
+  - tags
+  - meta
+
+### Referencing exposures
+
+```
+dbt run -s +exposure:weekly_jaffle_metrics
+dbt test -s +exposure:weekly_jaffle_metrics
+```
+
+When documentation site is generated, you'll see the exposure.
+
+![exposure](../Images/dbt-docs-exposures.png)
+![dag](../Images/dag-exposures.png)
+
+## Environmental variables
+
+> Environmental variables in dbt cloud must be prefixed with either DBT_ or DBT_ENV_SECRET_. Environment
+> variables keys are uppercased and case sensitive. 
+
+Environmental variables can be set in many places, therefore there is a order of precedence, from lowest to highest: 
+
+1. the optional default argument supplied to the *env_var* Jinja function in code
+2. a project-wide defualt value, which can be overridden at
+3. the environment level, which can in turn be overridden again at
+4. the job level (job override) or in the IDE for an individual dev (personal override).
+
+### To set environmental variables ar the project and environment level
+
+To set environment variables, head to *Environments* section of you console. You will see *Project Default* as a column, this is a value that will persist across your whole project.
+
+### Override at a job level
+
+These values above can be overridden at the job level but going into *Settings* in a job and going to *Environment Variables*
+
+### Override at the personal level
+
+Go to your profile and hit *Environmental Variables*
+
+### Special environmental variables
+
+- dbt CLoud context
+  - DBT_ENV: This key is reserved for the dbt Cloud application and will always resolve to 'prod'
+
+- Run details
+  - DBT_CLOUD_PROJECT_ID: The ID of the dbt Cloud Project for this run
+  - DBT_CLOUD_JOB_ID: The ID of the dbt CLoud Job for this run
+  - DBT_CLOUD_RUN_ID: The ID of this particular run
+  - DBT_CLOUD_RUN_REASON_CATEGORY: The "category" of the trigger for this run (one of: [scheduled, github_pull_request, gitlab_merge_request, other])
+  - DBT_CLOUD_RUN_REASON: The specific trigger for this run (e.g. [scheduled, kicked off by <email>, or custom via API])
+
+- Git details
+
+*Note: These variables are currently only available for GitHub and GitLab PR builds triggered via a webhook*
+
+  - DBT_CLOUD_PR_ID: The Pull Request ID in the connected version control system
+  - DBT_CLOUD_GIT_SHA: The git commit SHA which is being run for this Pull Request build
+
+### env_var
+
+The *env_var* function can be used to incorporate Environmental Variables from the system into your dbt project. This *env_var* function can be used in your *profiles.yml* file, the *dbt_project.yml* file, the *sources.yml* file, your *schema.yml* files, adn in model *.sql* files. Essentially *env_var* is available anywhere dbt processes jinja code.  
+
+When used in *profiles.yml* file (to avoid putting credentials on a server), it can be used like this:
+
+profiles.yml
+```
+profile:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: 127.0.0.1
+      # IMPORTANT: Make sure to quote the entire Jinja string here
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      ....
+```
+
+If the *DBT_USER* and *DBT_PASSWORD* are present when dbt is invoked, then these variables will be pulled into the profiles as expected. If any environment variables are not set, then dbt will raise a complication error.
+
+*env_var* accepts a second, optional argument for default value like so:
+
+dbt_project.yml
+```
+...
+models:
+  jaffle_shop:
+    +materialized: "{{ env_var('DBT_MATERIALIZATION', 'view') }}"
+```
+
+#### Secrets
+
+For certain configs, you can use "secret" env vars. Any env var with prefix DBT_ENV_SECRET_ will be:
+  - Available for use in *profiles.yml* + *packages.yml*, via the same env_var() function
+  - Disallowed everywhere else, including *dbt_project.yml* and model SQL, to prevent accidentally writing these secret values to the data warehouse or metadata artifacts
+  - Scrubbed from dbt logs and replaced with *****, any time its value appears in those logs 
+
+
+## target
+
+*target* contains information about your connection to the warehouse
+
+- dbt CLI: These values are based on the target defined in your profiles.yml file
+- dbt Cloud Scheduler
+  - *target.name* is defined per job
+  - For all other attributes, the values are defined by the deployment connection. To check any of these values, head to *Environments*, select relevant deployment environment, and select settings. 
+  - dbt Cloud IDE: The values defined by your connection and credentials. 
+
+### Common
+
+Variable:
+- target.profile_name
+  - e.g. jaffle_shop
+  - The name of the active profile
+- target.name
+  - e.g. dev
+  - Name of the active target
+- target.schema
+  - e.g. dbt_alice
+  - Name of the dbt schema (or, dataset on BigQuery)
+- target.type
+  - e.g. postgres
+  - [postgres, snowflake, bigquery, redshift]
+- target.threads
+  - e.g. 4
+
+## schema
+
+### What is a custom schema
+
+Optionally specify a custom schema for a model or seed. By default, all dbt models are built in the schema specified in your target. In dbt projects with a lot of models, it may be useful to instead build some models in schemas other than your target schema, to logically group them. 
+
+When dbt creates a relation (table/view) in a database, it creates it as: *{{ database }}.{{ schema }}.{{ identifier }}* e.g. analytics.finance.payments
+
+The standard behaviour of dbt is:
+- If a custom schema is not specified, the schema of the relation is the target schema ({ target.schema })
+- If a custom schema is specified, by default, the schema of the relation is {{ target.schema }}_{{ schema }}
+
+For example
+
+![schemas](../Images/schemas.PNG)
+
+### How to use custom schemas
+
+Apply this to a specific model by using config block
+```
+{{ config(schema='marketing') }}
+
+select ...
+```
+
+Apply it in subdirectory model in *dbt_project.yml*
+```
+# models in `models/marketing/ will be rendered to the "*_marketing" schema
+models:
+  my_project:
+    marketing:
+      +schema: marketing
+```
+
+Or seeds and tests
+```
+seeds:
+  +schema: mappings
+```
+
+```
+tests:
+  +store_failures: true
+  +schema: the_island_of_misfit_tests
+```
+
+## database
+
+Similar to custom schemas, you can define a custom database for a model or seed.
+
+Apply this to specific config block
+```
+
+{{ config(database="jaffle_shop") }}
+
+select * from ...
+```
+
+Apply it in *dbt_project.yml*
+```
+name: jaffle_shop
+
+models:
+  my_project:
+    +database: jaffle_shop
+
+    # For BigQuery users:
+    # project: jaffle_shop
+```
+
