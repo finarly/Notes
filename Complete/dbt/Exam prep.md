@@ -1076,4 +1076,3 @@ models:
     # For BigQuery users:
     # project: jaffle_shop
 ```
-

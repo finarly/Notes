@@ -82,12 +82,12 @@ Tests are assertions you have about your data. It is critical that these asserti
 
 Testing at scale is difficult, but dbt can do it with: 
 
-```
+'''
 dbt test runs all tests in the dbt project
 dbt test --select test_type:generic
 dbt test --select test_type:singular
 dbt test --select one_specific_model
-```
+'''
 
 You can write a test which will test against models in development, and as the model gets pushed to production, the test can continuously scheduled to run against the model. 
 
