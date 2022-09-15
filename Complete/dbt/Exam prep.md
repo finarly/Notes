@@ -643,7 +643,6 @@ e.g.
 Run all the common ancestors of snowplow_sessions and fct_orders:
 > dbt run --select +snowplow_sessions,+fct_orders
 
-
 ## Miscellaneous
 
 ### Flags
@@ -683,18 +682,42 @@ models:
         - "daily"
         - "published"
 ```
+
 ### ancestors and descendents
 
 If a resource has a '+' before it e.g. +model, that is all the ancestors aof the resource and the resource itself.
 
 If a resource has a '+' after it e.g. model+, that is all the descendants of the resource and the resource it self.
 
+### the "n-plus" operator
+
+You can adjust the above by quantifying the number of edges to step through
+
+e.g. this will reference its first degree and second degree parents
+
+> dbt run --select 2+my_model
+
+### the "at" operator
+
+Similar to "+", but will also include the parents of the children of the selected model.
+
+> dbt run --models @my_model
+
+### the "star" operator
+
+The * operator matches all models within a package or directory
+
+e.g. runs all of the models in the snowplow package
+
+> dbt run --select snowplow.* 
+
+e.g. run all of the models in models/finance/base subfolder
+
+> dbt run --select finance.base.*
+
 ### What is CTE
 
 CTE stands for "Common Table Expression", which is a result set available for use until the end of SQL script execution. Using the *with* keyword at the top of a query allows us to use CTEs in our code.
-
-
-
 
 ## How we structure our dbt projects
 
@@ -710,7 +733,6 @@ Analytics engineering is to help group of humans collaborate on making better de
 - Marts: bringing together our modular pieces into a wide, rich vision of the entities our organisation cares about
 
 2. Other layers
-
 
 ## dbt Project Checklist
 
@@ -1076,3 +1098,53 @@ models:
     # For BigQuery users:
     # project: jaffle_shop
 ```
+
+## Grant statements
+
+Old:
+
+BI tools will need to be granted privilege to read tables in a warehouse. A good way to do this is:
+
+![permission](../../Images/permissions.PNG)
+
+New:
+
+Using config in dbt_project.yml, schema.yml in subfolders, or in .sql files.
+
+## GitHub PR template
+
+1. Description & motivation
+  - if your code is how, the description is what and why
+2. To-do before merge (optional)
+3. Screenshots
+  - screen shots of DAG
+4. Validation of models 
+  - can add screenshot of dbt output code
+5. Changes to existing models
+  - can leave post-merge instructions, like if incremental model has been updated with an additional column, that there would need to be a full refresh. 
+6. Checklist (**Most important in PR template**)
+  - My pull request represents one logical piece of work
+  - My commits are related to the pull request and look clean
+  - SQL follows the dbt lab style guide (or project style guide)
+  - Added appropriate tests and documentation to any new models 0models should have at least unique and not null tests on primary key)
+  - Models have been materialised appropriately
+
+## Hooks and operations
+
+- About hooks
+
+Hooks are snippets of SQL that are executed at different times:
+
+  - pre-hook: before a model, seed, or snapshot is built
+  - post-hook: after a model, seed, or snapshot is built
+  - on-run-start: at the start of *dbt run*, *dbt seed*, or *dbt snapshot*
+  - on-run-end: at the end of ^
+
+You can call a macro in a hook.
+
+- About operations
+
+Operations are macros that you can run using the *run-operation* command. They aren't a separate resources, you use operations so you can run a macro without needing to run a model (as macros are used in models)
+
+
+ 
