@@ -1146,5 +1146,13 @@ You can call a macro in a hook.
 
 Operations are macros that you can run using the *run-operation* command. They aren't a separate resources, you use operations so you can run a macro without needing to run a model (as macros are used in models)
 
+## threads
+When dbt runs, it creates a directed acyclic graph (DAG) of links between models. The number of threads represents the maximum number of paths through the graph dbt may work on at once. 
 
- 
+For example, with 1 thread dbt would build 1 model and finish it before moving to the next thread. If you have 8 threads then dbt can build 8 models at once. 
+
+However:
+- Increasing number of threads puts more load on your warehouse which may affect other jobs
+- The number of concurrent queries your database will allow you to run might be a limiting factor.
+
+4 is the recommended thread. You can also use different number of threads when executing dbt command by using *--threads* option. 
