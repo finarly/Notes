@@ -915,8 +915,8 @@ dbt test -s +exposure:weekly_jaffle_metrics
 
 When documentation site is generated, you'll see the exposure.
 
-![exposure](../Images/dbt-docs-exposures.png)
-![dag](../Images/dag-exposures.png)
+![exposure](../../Images/dbt-docs-exposures.png)
+![dag](../../Images/dag-exposures.png)
 
 ## Environmental variables
 
