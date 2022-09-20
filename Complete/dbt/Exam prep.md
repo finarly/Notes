@@ -827,31 +827,31 @@ Analytics engineering is to help group of humans collaborate on making better de
   - Are there any direct joins from source into an intermediate model?
     - All sources should have a corresponding staging model to clean and standardise the data structure.
 
-    ![1](../Images/1.jpeg)
+    ![1](../../Images/1.jpeg)
 
   - Do sources join directly together?
     - All sources should have a corresponding staging model to clean and standardise the data structure. 
 
-    ![2](../Images/2.jpeg)
+    ![2](../../Images/2.jpeg)
 
   - Are there any rejoining of upstream concepts?
     - This may indicate:
       - A model may need to be expanded so all the necessary data is available downstream
       - A new intermediate model is necessary to join the concepts for use in both places
 
-      ![3](../Images/3.jpeg)
+      ![3](../../Images/3.jpeg)
 
   - Are there any "bending connections"?
     - Are models in the same layer dependent on each other?
       - This may indicate a change in naming is necessary, or the model should reference further upstream models.
 
-      ![4](../Images/4.jpeg)
+      ![4](../../Images/4.jpeg)
 
   - Are there model fan outs of intermediate/dimension/fact models?
       - This might indicate some transformations should move to the BI layer, or transformations should be moved upstream
       - Your dbt project needs to have a defined end point!
 
-      ![5](../Images/5.jpeg)
+      ![5](../../Images/5.jpeg)
     
       - Is there repeated logic in multiple models?
         - This indicates an opportunity to move logic into upstream models or create specific intermediate models to make the logic reusable
