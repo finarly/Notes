@@ -301,7 +301,7 @@ The *dbt run-operation* command id used to involve a macro.
 ### test
 
 e.g.
-> dbt test --select one_specific_model,test_type:singular
+> dbt test --select one_specific_model,test_type:singular(generic)
 
 Arguments:
 - '--select'
@@ -415,9 +415,9 @@ They are not resources in and of themselves, and instead they are child properti
 - tests 
 - description
 
-As columns are not resources, *tags* and *meta* properties are not true configurations. They do not inherit the *tags* or *meta* values of their parent resources. 
+As columns are not resources, *tags* and *meta* properties are not true configurations. They do not inherit the *tags* or *meta* values of their parent resources.
 
-However, you can select a generic test, defined on a column, using tags applied to its column or top-level resources. 
+However, you can select a generic test, defined on a column, using tags applied to its column or top-level resources.
 
 ```
 version: 2
@@ -554,7 +554,7 @@ models:
 
 Tests property defines assertions about a column, table, or view. The property contains a list of generic tests, reference by name, which can include the four built-in generic tests available in dbt.
 
-For example, you can tests so that a column contains no duplicates and zero null values. Any arguments or configurations passed to those test should be nested below the test name. 
+For example, you can tests so that a column contains no duplicates and zero null values. Any arguments or configurations passed to those test should be nested below the test name.
 
 Once defined, you can validate their correctness by running *dbt test*.
 
@@ -564,7 +564,7 @@ Out-of-box tests:
 - accepted_values
 - relationships: validates that all of the records in a child table have a corresponding record in a parent table. 
 
-Some tests require multiple columns so it doesnt make sense to nest them under the *columns:* key, in this case you can apply the test tot the model 9or source, seed, or snapshot) instead:
+Some tests require multiple columns so it doesn't make sense to nest them under the *columns:* key, in this case you can apply the test tot the model 9or source, seed, or snapshot) instead:
 
 ```
 version: 2
@@ -574,6 +574,93 @@ models:
     tests:
       - unique:
           column_name: "country_code || '-' || order_id"
+```
+
+### Configuring test 'severity'
+
+Normally tests will throw error if the number of failure is a non-zero. But you can change the case to show warnings instead of error, or warning up to a certain number of failures and then error. 
+
+The relevant configs:
+
+- *severity*: *error* or *warn* (default: *error*)
+- *error_if*: conditional expression (default:*!=0*)
+- warn_if: conditional expression (default:*!=0*)
+
+Conditional expression can be anything that SQl supports. How this works is:
+
+- If *severity: error* dbt will check *error_if* first. If error condition is met, the test returns an error. If it is not met, dbt will then check the *warn_if* condition. If the warn condition is met, the test warns; if it is not met, the test passes.
+
+- If *severity: warn* dbt will skip *error_if* condition entirely and jump straight to the *warn_if* condition. If the warn condition is met, the test warns; if it's not met, the test passes.
+
+
+
+### Test selection examples
+
+Test selection works a little differently from other resource selection. This makes it very easy to:
+
+- run tests on a particular model
+- run tests on all models in a subdirectory
+- run tests on all models upstream/downstream of a model
+
+Like all resource types they can be selected directly or indirectly.
+
+#### Direct selection
+Generic tests only:
+> dbt test --select test_type:generic
+
+Singular tests only:
+> dbt test --select test_type:singular
+
+#### Indirect selection
+
+> dbt test --select customers
+
+> dbt test --select orders
+
+These are indirect selection as we are selecting the models but in these cases the tests defined in these models are run. by default a test with run when ANY parent is selected. This is also knows as "eager" indirect selection. 
+
+It is possible to prevent test from running if one or more of its parent are unselected, this is called "cautious" indirect selection. This can be helpful if you are only building a subset of your DAG, and you want to avoid test failure on unbuilt resources (another way to achieve is with deferral).
+
+> dbt test --indirect-selection=cautious
+
+(Or setting *indirect_selection: cautious* in a yaml selector)
+
+e.g.
+
+> dbt test --select customers orders --indirect-selection=cautious
+
+Syntax examples
+
+```
+# Run tests on a model (indirect selection)
+$ dbt test --select customers
+
+# Run tests on all models in the models/staging/jaffle_shop directory (indirect selection)
+$ dbt test --select staging.jaffle_shop
+
+# Run tests downstream of a model (note this will select those tests directly!)
+$ dbt test --select stg_customers+
+
+# Run tests upstream of a model (indirect selection)
+$ dbt test --select +stg_customers
+
+# Run tests on all models with a particular tag (direct + indirect)
+$ dbt test --select tag:my_model_tag
+
+# Run tests on all models with a particular materialization (indirect selection)
+$ dbt test --select config.materialized:table
+
+# tests on all sources
+$ dbt test --select source:*
+
+# tests on one source
+$ dbt test --select source:jaffle_shop
+
+# tests on one source table
+$ dbt test --select source:jaffle_shop.customers
+
+# tests on everything _except_ sources
+$ dbt test --exclude source:*
 ```
 
 ## Documentation
