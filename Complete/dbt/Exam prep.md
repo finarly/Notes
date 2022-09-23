@@ -477,8 +477,7 @@ models:
         description: '{{ doc("orders_status") }}'
 ```
 
-
-Doc blocks should be place in files with a .md extension. 
+Doc blocks should be place in files with a .md extension.
 
 models/docs.md
 ```
@@ -562,7 +561,7 @@ Out-of-box tests:
 - not_null
 - unique
 - accepted_values
-- relationships: validates that all of the records in a child table have a corresponding record in a parent table. 
+- relationships: validates that all of the records in a child table have a corresponding record in a parent table.
 
 Some tests require multiple columns so it doesn't make sense to nest them under the *columns:* key, in this case you can apply the test tot the model 9or source, seed, or snapshot) instead:
 
@@ -1243,3 +1242,30 @@ However:
 - The number of concurrent queries your database will allow you to run might be a limiting factor.
 
 4 is the recommended thread. You can also use different number of threads when executing dbt command by using *--threads* option. 
+
+## Global configs
+
+Tells dbt how to run projects on your machine. Differs from project (dbt_project.yml) and resource configs which tell dbt what to run. It affects all dbt commands and controls (including):
+
+- visual output of logs
+- manner which dbt parses project
+- what to do when dbt finds a version mismatch or a failing model
+
+They can be set in, in order of precedence:
+
+1. Command line flags
+
+```
+$ dbt --version-check run
+$ dbt --no-version-check run
+```
+
+2. Environmental variables
+
+```
+$ export DBT_<THIS-CONFIG>=True
+$ dbt run
+```
+
+3. Yaml configs (usually profiles.yml)
+
