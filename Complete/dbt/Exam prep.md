@@ -1269,3 +1269,6 @@ $ dbt run
 
 3. Yaml configs (usually profiles.yml)
 
+### Failing fast
+
+Supplying -x or --failfast flag to *dbt run* will make dbt exit immediately if a single resource fails to build. If other models are in-progress when the first model fails, then dbt will terminate the connections for these still-running models.
