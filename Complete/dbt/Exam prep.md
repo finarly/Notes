@@ -1272,3 +1272,63 @@ $ dbt run
 ### Failing fast
 
 Supplying -x or --failfast flag to *dbt run* will make dbt exit immediately if a single resource fails to build. If other models are in-progress when the first model fails, then dbt will terminate the connections for these still-running models.
+
+### warn_error
+
+Will convert dbt warnings into error
+
+> dbt --warn-error run
+
+## dispatch
+
+Because dbt works across different data platforms (e.g. redshift, bigquery) you can create a generic macro, call it and then it will then use the appropriate adapter formatted macro. Syntax:
+
+Args:
+- macro_name (required): Name of macro to dispatch. Must be literal string
+- macro_namespace (optional): Namespace (package) of macro to dispatch. Must be literal string
+
+Adapter prefix:
+- Postgres: postgres__my_macro
+- Redshift: redshift__my_macro
+- Snowflake: snowflake__my_macro
+- BigQuery: bigquery__my_macro
+- OtherAdapter: otheradapter__my_macro
+- default: default__my_macro
+
+If dbt does not find an adapter-specific implementation, it will dispatch to the default implementation.
+
+Example:
+
+The top macro is just for "dispatching" (look for and return) based on the primary macro name ("concat")
+
+```
+{% macro concat(fields) -%}
+    {{ return(adapter.dispatch('concat')(fields)) }}
+{%- endmacro %}
+
+
+{% macro default__concat(fields) -%}
+    concat({{ fields|join(', ') }})
+{%- endmacro %}
+
+
+{% macro redshift__concat(fields) %}
+    {{ fields|join(' || ') }}
+{% endmacro %}
+
+
+{% macro snowflake__concat(fields) %}
+    {{ fields|join(' || ') }}
+{% endmacro %}
+```
+
+## Debugging
+
+Process of debugging:
+
+1. Read the error message
+2. Inspect the file that was known to cause the issue, and see if there's an immediate fix
+3. Isolate the problem - for example, by running one model a time, or by undoing the code that broke things
+4. Get comfortable with compiled and the logs 
+  - **target/complied** directory contains the select statements that you can run in any query editor
+  - **target/run** directory contains the SQL dbt executes to build your models
