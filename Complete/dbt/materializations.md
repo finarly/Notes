@@ -71,8 +71,8 @@ where collector_tstamp >= (select max(max_collector_tstamp) from {{this}})
 ```
 - {{ this }} is the current existing database object mapped to this model. We use this because we don't want to ref and model to itself
 - is_incremental(): Checks 4 conditions, if the answers to below conditions are **Yes Yes Yes No** then this is an incremental run.
-    - Does this model already exist ias an object in the database?
-    - Is that database obkect a table?
+    - Does this model already exist as an object in the database?
+    - Is that database object a table?
     - Is this model configured with **materialized='incremental'**?
     - Was the --full-refresh flag passed to this dbt run?
 
@@ -89,7 +89,7 @@ where collector_tstamp >= (select dateadd('day', -3,max(max_collector_tstamp)) f
 - however...we'll get duplicate records. To fix this we change the configuration:
 ```
 {[ config(
-    materializied='incremental',
+    materialized='incremental',
     unique_key='page_view_id'
 )]}
 ```
@@ -101,7 +101,7 @@ The goal of incremental tables is it approximates the true table with a fraction
 - Set the cutoff based on these two inputs
 - Once a week (or however many days), perform a --full-refresh run to get the 'true' table 
 
-#### How do things for apart
+#### How do things fall apart
 Sometimes the cut off doesnt cover all the data even with the 3 days, so we may end up under counting, which may not be a big problem since we can do a full refresh. 
 
 What if we want to calculate window functions? This would be a problem since we are only calculating using 3 days of data. To fix this we can:
@@ -129,7 +129,7 @@ Bigger datasets are a different cost-optimisation problems
 #### Not so good
 - You have small-ish data
 - Your data changes constantly: new columns, rename columns etc
-- Your data is updated in unpredicatable ways
+- Your data is updated in unpredictable ways
 - Your transformation performs comparisons or calculations that require other_rows (table + view)
 
 #### Incremental models introduce tradeoffs:
@@ -137,10 +137,10 @@ Bigger datasets are a different cost-optimisation problems
 - They introduce a level of code complexity (i.e. how easy it is for someone to understand your code)
 - Prioritising correctness can negate performance gains from incrementality. 
 
-*Think of incremental models as an upgrate, not a starting point. Start with views, then tables, then if it takes too long to build, use incremental models.*
+*Think of incremental models as an upgrade, not a starting point. Start with views, then tables, then if it takes too long to build, use incremental models.*
 
 #### Tips
-Keep the inputs and transformations of your incremental models as singlar, simple, and immutable as posible.
+Keep the inputs and transformations of your incremental models as singular, simple, and immutable as possible.
 - Slowly changing dimensions, like a product_name that the company reglarly rebards? Join from a dim table in a downstream model rather than have to go back and reprocess. 
 - Window functions for quality of life counters? Fix it in post - i.e. a separate downstream model as well
 
