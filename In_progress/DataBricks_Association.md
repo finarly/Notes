@@ -67,8 +67,8 @@ To read the table at a particular point:
 To rollback:
 
 > RESTORE TABLE:
-    >**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
-    >**RESTORE TABLE** my_table **TO VERSION AS OF** 36
+    >>**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
+    >>**RESTORE TABLE** my_table **TO VERSION AS OF** 36
 
 #### Compaction
 
