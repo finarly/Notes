@@ -113,20 +113,20 @@ AS SELECT id, name, email, birth_date, city FROM users
 - CHECK constraints
 
 General format:
-    > ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details
+> ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details
 
 Example:
-    > ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')
+> ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')
 
 
 #### Cloning Delta Lake Tables
 
 - Deep Clone
     - Fully copies date + metadata from a source table to a target
-    - > ```
-        CREATE TABLE table_clone
-        DEEP CLONE source_table
-    ```
+```
+    CREATE TABLE table_clone
+    DEEP CLONE source_table
+ ```
 
 
 ## Relational entities
