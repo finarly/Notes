@@ -2,7 +2,7 @@
 
 ## Overview
 
-Databricks is a multi-cloud lakehouse platform based on Apache Spark. It aims to achieve the best of both worlds between datawarehouses and datalake.
+Databricks is a multi-cloud lake-house platform based on Apache Spark. It aims to achieve the best of both worlds between data warehouses and data lake.
 - Data lakes are known to be more open, flexible, and support ML better (as it benefits from raw data).
 - Data warehouses are known to be more reliable, has strong governance, and performance very well when queried.
 
@@ -66,9 +66,9 @@ To read the table at a particular point:
 
 To rollback:
 
-> RESTORE TABLE:
->>**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
->>**RESTORE TABLE** my_table **TO VERSION AS OF** 36
+- RESTORE TABLE:
+    >**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
+    >**RESTORE TABLE** my_table **TO VERSION AS OF** 36
 
 #### Compaction
 
@@ -85,4 +85,53 @@ This is a command to help clean up unused files such as:
 - uncommitted files
 - files that are no longer in the latest table state
 
+- VACUUM (default period 7 days): 
+    > VACUUM table_name [*retention period*]
+
+Note: if you vacuumed, then you cannot perform time travel. 
+
+### Setting up Delta Tables
+
+> CREATE TABLE new_table
+
+    - **COMMENT** "Contains PII"
+    - **PARTITIONED BY** (city, birth_date)
+    - **LOCATION** '/some/path'
+> AS SELECT id, name, email, birth_date, city FROM users
+
+
+> CREATE TABLE table_1 AS SELECT _ FROM table_2
+
+
+## Relational entities
+
+### Databases
+
+In Databricks, a database is a schema in Hive meta store, therefore:
+
+**CREATE DATABASE** db_name = **CREATE SCHEMA** db_name
+
+Hive metastore is a repository of metadata, which holds metadata about your table and data. 
+
+The default database location is in the default hive directory: *dbfs:/user/hive/warehouse* 
+
+You can create databases outside of this using **LOCATION** command.
+
+> **LOCATION** 'dbfs:/custom/path/db_y.db
+
+The 'db' suffix is what lets us know that it is a database.
+
+### Tables
+
+There are 2 types of tables:
+
+- Managed tables:
+    - Created under the database directory
+    > **CREATE TABLE** table_name
+    - The underlying data files will be deleted when dropping the table.
+
+- External tables:
+    - Created outside the database directory
+    > **CREATE TABLE** table_name **LOCATION** 'path'
+    - The underlying data files will not be deleted when dropping the table.
 
