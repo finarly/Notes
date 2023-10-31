@@ -94,7 +94,6 @@ Note: if you vacuumed, then you cannot perform time travel.
 
 ### Setting up Delta Tables
 
-
 #### Create Table AS (CTAS)
 
 ```
@@ -104,8 +103,6 @@ CREATE TABLE new_table
     - **LOCATION** '/some/path'
 AS SELECT id, name, email, birth_date, city FROM users
 ```
-
-> CREATE TABLE table_1 AS SELECT _ FROM table_2
 
 #### Table Constraints
 
@@ -121,23 +118,38 @@ Example:
 
 #### Cloning Delta Lake Tables
 
+NB: Either cloning methods will not affect the source tables.
+
 - Deep Clone:
     - Fully copies date + metadata from a source table to a target, which means that this will take a while. Executing this again will sync the changes.
-
 ```
 CREATE TABLE table_clone
 DEEP CLONE source_table
  ```
 
 - Shadow Clone:
-    - Quickly creates a copy of a table by copying over the Delta transaction logs
-
+    - Quickly creates a copy of a table by copying over the Delta transaction logs, which means there's no data moving.
 ```
 CREATE TABLE table_clone
 SHALLOW CLONE source_table
 ```
 
+### Setting up Views
 
+Same as views in other databases. 
+
+Types of views: 
+1. (Stored) Views: persisted like a table\ 
+> CREATE VIEW view_name AS query
+
+2. Temporary views: linked to a particular spark session.
+> CREATE TEMP VIEW view_name AS query
+
+    - Spark session is created when:
+        - Opening a new notebook
+        - Detaching and reattaching to a cluster
+        - Installing a python package
+        - Restarting a cluster
 
 ## Relational entities
 
