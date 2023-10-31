@@ -121,12 +121,22 @@ Example:
 
 #### Cloning Delta Lake Tables
 
-- Deep Clone
-    - Fully copies date + metadata from a source table to a target
+- Deep Clone:
+    - Fully copies date + metadata from a source table to a target, which means that this will take a while. Executing this again will sync the changes.
+
 ```
-    CREATE TABLE table_clone
-    DEEP CLONE source_table
+CREATE TABLE table_clone
+DEEP CLONE source_table
  ```
+
+- Shadow Clone:
+    - Quickly creates a copy of a table by copying over the Delta transaction logs
+
+```
+CREATE TABLE table_clone
+SHALLOW CLONE source_table
+```
+
 
 
 ## Relational entities
