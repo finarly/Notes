@@ -208,4 +208,4 @@ There are 2 types of tables:
 
 ### Querying files
 
-![query diagram](./databricks/Screenshot%202023-11-01%20000422.png)
+
