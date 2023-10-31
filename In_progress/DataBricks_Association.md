@@ -68,15 +68,17 @@ To rollback:
 
 - RESTORE TABLE:
     >**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
+    >
     >**RESTORE TABLE** my_table **TO VERSION AS OF** 36
 
 #### Compaction
 
 You can improve read query speeds by compacting small files into larger ones. 
 
-> OPTIMIZE
-    OPTIMIZE my_table
-    > ZORDER BY column_name
+
+> OPTIMIZE my_table
+>
+> ZORDER BY column_name
 
 
 #### Vacuum
