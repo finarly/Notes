@@ -92,13 +92,13 @@ Note: if you vacuumed, then you cannot perform time travel.
 
 ### Setting up Delta Tables
 
-> CREATE TABLE new_table
-
+```
+CREATE TABLE new_table
     - **COMMENT** "Contains PII"
     - **PARTITIONED BY** (city, birth_date)
     - **LOCATION** '/some/path'
-> AS SELECT id, name, email, birth_date, city FROM users
-
+AS SELECT id, name, email, birth_date, city FROM users
+```
 
 > CREATE TABLE table_1 AS SELECT _ FROM table_2
 
