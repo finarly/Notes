@@ -66,15 +66,23 @@ To read the table at a particular point:
 
 To rollback:
 
-> RESTORE TABLE 
-    > **RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
+> RESTORE TABLE:
+    >**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
     >**RESTORE TABLE** my_table **TO VERSION AS OF** 36
 
 #### Compaction
 
 You can improve read query speeds by compacting small files into larger ones. 
 
+> OPTIMIZE
+    OPTIMIZE my_table
+    > ZORDER BY column_name
 
 
+#### Vacuum
+
+This is a command to help clean up unused files such as:
+- uncommitted files
+- files that are no longer in the latest table state
 
 
