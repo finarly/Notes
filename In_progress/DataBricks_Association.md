@@ -15,6 +15,8 @@ It supports all languages supported by Spark:
 - R
 - Java
 
+
+
 ### Layout
 
 Databricks has 3 layers: 
@@ -22,6 +24,7 @@ Databricks has 3 layers:
 1. Cloud Service: AWS, Azure, GCP etc.
 2. Runtime: Apache Spark and Delta Lake
 3. Workspace: databricks GUI
+
 
 ### Data resource deployment view
 
@@ -33,6 +36,8 @@ Databricks has 3 layers:
     - The data plane lives in the customer's account.
     - Since Apache Spark processes data in distributed manner, DBricks has a native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
 
+
+
 ## Delta Lake
 
 Delta lake is an open-source software that provides the foundation for storing data and tables in the Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
@@ -41,9 +46,11 @@ It is storage framework that helps data lakes become lake house.
 
 The data held in delta tables are stored in one or more files in parquet format, alongside a **Transaction Log**.
 
+
 ### Transaction log
 
 This is a JSON file which has ordered record of every transaction performed on the table. This is the single source of truth. 
+
 
 ### Advanced Delta Lake features
 
@@ -75,11 +82,9 @@ To rollback:
 
 You can improve read query speeds by compacting small files into larger ones. 
 
-
 > OPTIMIZE my_table
 >
 > ZORDER BY column_name
-
 
 #### Vacuum
 
@@ -91,6 +96,7 @@ This is a command to help clean up unused files such as:
     > VACUUM table_name [*retention period*]
 
 Note: if you vacuumed, then you cannot perform time travel. 
+
 
 ### Setting up Delta Tables
 
@@ -139,17 +145,26 @@ SHALLOW CLONE source_table
 Same as views in other databases. 
 
 Types of views: 
-1. (Stored) Views: persisted like a table\ 
+1. (Stored) Views: persisted like a table in the database.
+    - Dropped only by **DROP VIEW**
 > CREATE VIEW view_name AS query
 
-2. Temporary views: linked to a particular spark session.
-> CREATE TEMP VIEW view_name AS query
-
+2. Temporary views: tied to a spark session. It gets dropped when the session ends. 
     - Spark session is created when:
         - Opening a new notebook
         - Detaching and reattaching to a cluster
         - Installing a python package
         - Restarting a cluster
+
+> CREATE TEMP VIEW view_name AS query
+
+3. Global Tmeporary views: tied to a cluster. Droped when a cluster is restarted.
+
+> CREATE GLOBAL TEMP VIEW view_name AS query
+>
+> SELECT * FROM global_temp.view_name
+
+
 
 ## Relational entities
 
@@ -182,4 +197,9 @@ There are 2 types of tables:
     - Created outside the database directory
     > **CREATE TABLE** table_name **LOCATION** 'path'
     - The underlying data files will not be deleted when dropping the table.
+
+
+
+
+## Querying files
 
