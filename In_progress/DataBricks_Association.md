@@ -84,36 +84,60 @@ You can improve read query speeds by compacting small files into larger ones.
 #### Vacuum
 
 This is a command to help clean up unused files such as:
-- uncommitted files
-- files that are no longer in the latest table state
+- Uncommitted files
+- Files that are no longer in the latest table state
 
-- VACUUM (default period 7 days): 
+- VACUUM (default period 7 days):
     > VACUUM table_name [*retention period*]
 
 Note: if you vacuumed, then you cannot perform time travel. 
 
 ### Setting up Delta Tables
 
+
+#### Create Table AS (CTAS)
+
 ```
 CREATE TABLE new_table
     - **COMMENT** "Contains PII"
-    - **PARTITIONED BY** (city, birth_date)
+    - **PARTITIONED BY** (city, birth_date - should be used in huge files only)
     - **LOCATION** '/some/path'
 AS SELECT id, name, email, birth_date, city FROM users
 ```
 
 > CREATE TABLE table_1 AS SELECT _ FROM table_2
 
+#### Table Constraints
+
+- NOT NULL constraints
+- CHECK constraints
+
+General format:
+    > ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details
+
+Example:
+    > ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')
+
+
+#### Cloning Delta Lake Tables
+
+- Deep Clone
+    - Fully copies date + metadata from a source table to a target
+    - > ```
+        CREATE TABLE table_clone
+        DEEP CLONE source_table
+    ```
+
 
 ## Relational entities
 
 ### Databases
 
-In Databricks, a database is a schema in Hive meta store, therefore:
+In Databricks, a database is a schema in Hive meta-store, therefore:
 
 **CREATE DATABASE** db_name = **CREATE SCHEMA** db_name
 
-Hive metastore is a repository of metadata, which holds metadata about your table and data. 
+Hive meta-store is a repository of metadata, which holds metadata about your table and data. 
 
 The default database location is in the default hive directory: *dbfs:/user/hive/warehouse* 
 
