@@ -172,7 +172,9 @@ Types of views:
 
 In Databricks, a database is a schema in Hive meta-store, therefore:
 
+```
 **CREATE DATABASE** db_name = **CREATE SCHEMA** db_name
+```
 
 Hive meta-store is a repository of metadata, which holds metadata about your table and data. 
 
@@ -197,7 +199,6 @@ There are 2 types of tables:
     - Created outside the database directory
     > **CREATE TABLE** table_name **LOCATION** 'path'
     - The underlying data files will not be deleted when dropping the table.
-
 
 
 
