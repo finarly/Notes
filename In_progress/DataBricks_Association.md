@@ -208,9 +208,9 @@ There are 2 types of tables:
 
 
 Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
-- SELECT * FROM text.`/path/to/file`
+- SELECT * FROM text.`` `/path/to/file` ``
 - Example JSON:
-    - SELECT * FROM json.``/path/file_name.json``
+    - SELECT * FROM json.` `/path/file_name.json` `
 
 Extract as raw bytes - when working with images or unstructured data:
 - SELECT * FROM **binaryFile**.`/path/to/file`
