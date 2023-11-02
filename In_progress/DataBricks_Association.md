@@ -76,17 +76,17 @@ To read the table at a particular point:
 To rollback:
 
 - RESTORE TABLE:
-    >**RESTORE TABLE** my_table **TO TIMESTAMP AS OF** "2019-01-01"
-    >
-    >**RESTORE TABLE** my_table **TO VERSION AS OF** 36
+    - ```RESTORE TABLE my_table TO TIMESTAMP AS OF "2019-01-01" 
+         RESTORE TABLE my_table TO VERSION AS OF 36```
 
 #### Compaction
 
 You can improve read query speeds by compacting small files into larger ones. 
 
-> OPTIMIZE my_table
->
-> ZORDER BY column_name
+```
+OPTIMIZE my_table
+ZORDER BY column_name
+```
 
 #### Vacuum
 
@@ -95,7 +95,7 @@ This is a command to help clean up unused files such as:
 - Files that are no longer in the latest table state
 
 - VACUUM (default period 7 days):
-    > VACUUM table_name [*retention period*]
+    - ```VACUUM table_name [*retention period*]```
 
 Note: if you vacuumed, then you cannot perform time travel. 
 
@@ -212,7 +212,7 @@ There are 2 types of tables:
 
 
 Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
-- ```SELECT * FROM text.`/path/to/file``
+- SELECT * FROM text.`/path/to/file`
 - Example JSON:
     - SELECT * FROM json.`/path/file_name.json`
 
