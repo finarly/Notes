@@ -147,7 +147,7 @@ Same as views in other databases.
 Types of views: 
 1. (Stored) Views: persisted like a table in the database.
     - Dropped only by **DROP VIEW**
-```CREATE VIEW view_name AS query```
+    - ```CREATE VIEW view_name AS query```
 
 2. Temporary views: tied to a spark session. It gets dropped when the session ends. 
     - Spark session is created when:
@@ -155,13 +155,11 @@ Types of views:
         - Detaching and reattaching to a cluster
         - Installing a python package
         - Restarting a cluster
-
-```CREATE TEMP VIEW view_name AS query```
+    - ```CREATE TEMP VIEW view_name AS query```
 
 3. Global Temporary views: tied to a cluster. Dropped when a cluster is restarted.
 ```
 CREATE GLOBAL TEMP VIEW view_name AS query
-
 SELECT * FROM global_temp.view_name
 ```
 
