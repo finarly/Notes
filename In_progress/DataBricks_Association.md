@@ -1,4 +1,4 @@
-# DataBricks Learning
+l# DataBricks Learning
 
 ## Overview
 
@@ -160,7 +160,7 @@ Types of views:
 
 > CREATE TEMP VIEW view_name AS query
 
-3. Global Tmeporary views: tied to a cluster. Droped when a cluster is restarted.
+3. Global Temporary views: tied to a cluster. Dropped when a cluster is restarted.
 
 > CREATE GLOBAL TEMP VIEW view_name AS query
 >
@@ -210,6 +210,41 @@ There are 2 types of tables:
 
 ![query diagram](./databricks/Screenshot%202023-11-01%20000422.png)
 
-- JSON:
 
+Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
+- SELECT * FROM **text**.`/path/to/file`
+- Example JSON:
 > SELECT * FROM json.`/path/file_name.json`
+
+Extract as raw bytes - when working with images or unstructured data 
+- SELECT * FROM **binaryFile**.`/path/to/file`
+
+To load data from files to tables:
+
+> CREATE TABLE table_name AS SELET * FROM file_format.`/path/to/file`
+
+The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema, but is very limited with options.
+
+That is why we use the normal table creation statement.
+
+```
+CREATE TABLE table_name 
+(col_name1 col_type1,...)
+USING data_source
+OPTIONS (key1 = val1,key2=val2,...)
+LOCATION = path
+```
+
+With these commands we are always create an external table,therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
+
+The solution to this problem is:
+1. Create a temporary view using create table method
+2. Create a table using CTAS using the temporary view in step 1.
+
+
+
+
+
+
+
+
