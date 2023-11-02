@@ -42,7 +42,7 @@ Databricks has 3 layers:
 
 Delta lake is an open-source software that provides the foundation for storing data and tables in the Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
 
-It is storage framework that helps data lakes become lake house.
+It is a storage framework that helps data lakes become lake house.
 
 The data held in delta tables are stored in one or more files in parquet format, alongside a **Transaction Log**.
 
@@ -167,7 +167,6 @@ Types of views:
 > SELECT * FROM global_temp.view_name
 
 
-
 ### Relational entities
 
 #### Databases
@@ -184,7 +183,9 @@ The default database location is in the default hive directory: *dbfs:/user/hive
 
 You can create databases outside of this using **LOCATION** command.
 
-> **LOCATION** 'dbfs:/custom/path/db_y.db
+```
+ **LOCATION** 'dbfs:/custom/path/db_y.db
+```
 
 The 'db' suffix is what lets us know that it is a database.
 
@@ -194,14 +195,13 @@ There are 2 types of tables:
 
 - Managed tables:
     - Created under the database directory
-    > **CREATE TABLE** table_name
+    ```**CREATE TABLE** table_name```
     - The underlying data files will be deleted when dropping the table.
 
 - External tables:
     - Created outside the database directory
     > **CREATE TABLE** table_name **LOCATION** 'path'
     - The underlying data files will not be deleted when dropping the table.
-
 
 
 ## ELT with Spark SQL and Python
@@ -216,7 +216,7 @@ Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV
 - Example JSON:
 > SELECT * FROM json.`/path/file_name.json`
 
-Extract as raw bytes - when working with images or unstructured data 
+Extract as raw bytes - when working with images or unstructured data:
 - SELECT * FROM **binaryFile**.`/path/to/file`
 
 To load data from files to tables:
@@ -235,12 +235,20 @@ OPTIONS (key1 = val1,key2=val2,...)
 LOCATION = path
 ```
 
-With these commands we are always create an external table,therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
+With these commands we are always create an external table, therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
 
 The solution to this problem is:
 1. Create a temporary view using create table method
 2. Create a table using CTAS using the temporary view in step 1.
 
+### Writing to tables
+
+When writing to table, there are multiple benefits in overwriting the data, rather than dropping and creating a new table.
+Those are:
+- the old version of the table still exist, so it can be time travelled to
+- it is faster because it does not need to go to the directory recursively or delete any files
+- it is an atomic operation, concurrent queries can still read the table as you are overwriting it
+- if overwriting table fails, it will be in its table state
 
 
 

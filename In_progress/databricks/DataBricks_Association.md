@@ -208,4 +208,12 @@ There are 2 types of tables:
 
 ### Querying files
 
+![query diagram](./databricks/Screenshot%202023-11-01%20000422.png)
 
+- JSON:
+> SELECT * FROM json.`/path/file_name.json`
+
+- Raw data:
+    - Extract text files as raw strings
+        - text based files (CSV,JSON,TSV, and TXT)
+        > SELECT * FROM text.`/path/to/file`
