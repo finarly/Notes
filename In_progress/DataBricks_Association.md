@@ -15,8 +15,6 @@ It supports all languages supported by Spark:
 - R
 - Java
 
-
-
 ### Layout
 
 Databricks has 3 layers: 
@@ -69,15 +67,15 @@ To read the table at a particular point:
     > SELECT * FROM my_table **TIMESTAMP AS OF** "2019-01-01"
 
 - Using version number:
-    > SELECT * FROM my_table **VERSION AS OF** 36
-    > SELECT * FROM my_table@36
+    - ```SELECT * FROM my_table VERSION AS OF 36```
+    - ```SELECT * FROM my_table@36```
 
 
 To rollback:
 
 - RESTORE TABLE:
-    - ```RESTORE TABLE my_table TO TIMESTAMP AS OF "2019-01-01" 
-         RESTORE TABLE my_table TO VERSION AS OF 36```
+    - ```RESTORE TABLE my_table TO TIMESTAMP AS OF "2019-01-01"```
+    - ```RESTORE TABLE my_table TO VERSION AS OF 36```
 
 #### Compaction
 
