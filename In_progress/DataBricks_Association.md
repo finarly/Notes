@@ -195,12 +195,12 @@ There are 2 types of tables:
 
 - Managed tables:
     - Created under the database directory
-        - ```**CREATE TABLE** table_name```
+        - ```CREATE TABLE table_name```
     - The underlying data files will be deleted when dropping the table.
 
 - External tables:
     - Created outside the database directory
-    > **CREATE TABLE** table_name **LOCATION** 'path'
+        -```CREATE TABLE table_name LOCATION 'path'```
     - The underlying data files will not be deleted when dropping the table.
 
 
@@ -212,9 +212,9 @@ There are 2 types of tables:
 
 
 Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
-- SELECT * FROM **text**.`/path/to/file`
+- ```SELECT * FROM text.`/path/to/file```
 - Example JSON:
-> SELECT * FROM json.`/path/file_name.json`
+    - ```SELECT * FROM json.`/path/file_name.json```
 
 Extract as raw bytes - when working with images or unstructured data:
 - SELECT * FROM **binaryFile**.`/path/to/file`
