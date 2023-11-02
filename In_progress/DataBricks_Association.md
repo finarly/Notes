@@ -195,7 +195,8 @@ There are 2 types of tables:
 
 - Managed tables:
     - Created under the database directory
-    ```**CREATE TABLE** table_name```
+
+    > ```**CREATE TABLE** table_name```
     - The underlying data files will be deleted when dropping the table.
 
 - External tables:
