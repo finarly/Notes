@@ -64,17 +64,17 @@ To see the history of a table:
 To read the table at a particular point:
 
 - Using timestamp:
-    > SELECT * FROM my_table **TIMESTAMP AS OF** "2019-01-01"
+    - ```SELECT * FROM my_table TIMESTAMP AS OF "2019-01-01"```
 
 - Using version number:
-    - ```SELECT * FROM my_table VERSION AS OF 36```
+    - ```SELECT * FROM my_table VERSION AS OF 36``` or
     - ```SELECT * FROM my_table@36```
 
 
 To rollback:
 
 - RESTORE TABLE:
-    - ```RESTORE TABLE my_table TO TIMESTAMP AS OF "2019-01-01"```
+    - ```RESTORE TABLE my_table TO TIMESTAMP AS OF "2019-01-01"``` or
     - ```RESTORE TABLE my_table TO VERSION AS OF 36```
 
 #### Compaction
@@ -116,10 +116,10 @@ AS SELECT id, name, email, birth_date, city FROM users
 - CHECK constraints
 
 General format:
-> ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details
+```ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details```
 
 Example:
-> ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')
+```ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')```
 
 
 #### Cloning Delta Lake Tables
@@ -147,7 +147,7 @@ Same as views in other databases.
 Types of views: 
 1. (Stored) Views: persisted like a table in the database.
     - Dropped only by **DROP VIEW**
-> CREATE VIEW view_name AS query
+```CREATE VIEW view_name AS query```
 
 2. Temporary views: tied to a spark session. It gets dropped when the session ends. 
     - Spark session is created when:
@@ -156,14 +156,14 @@ Types of views:
         - Installing a python package
         - Restarting a cluster
 
-> CREATE TEMP VIEW view_name AS query
+```CREATE TEMP VIEW view_name AS query```
 
 3. Global Temporary views: tied to a cluster. Dropped when a cluster is restarted.
+```
+CREATE GLOBAL TEMP VIEW view_name AS query
 
-> CREATE GLOBAL TEMP VIEW view_name AS query
->
-> SELECT * FROM global_temp.view_name
-
+SELECT * FROM global_temp.view_name
+```
 
 ### Relational entities
 
