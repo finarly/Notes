@@ -422,11 +422,61 @@ or
 DESCRIBE FUNCTION EXTENDED udf_name
 ```
 
-You can return different things by combining it with a **CASE WHEN THEN** statement. 
+You can return different things by putting **CASE WHEN THEN** statement after the **RETURN** section of the statement. 
 
 
 ***
 
 ## Incremental Data Processing
 
-### Structured Streaming 
+### Structured Streaming
+
+A **Data Stream** is any data source that grows over time.
+
+To process a data stream you can:
+1. Reprocess the entire source dataset each time
+2. Only process those new data added since last update
+    - Structured streaming
+
+
+Structured stream is create a stream of data from an source (e.g. input table) to a data sink (e.g. output table).
+There will be a trigger which will check the input table for any new data.
+
+For the input table:
+
+```
+streamDF = spark.readStream
+                .table("Input_Table")
+```
+
+For the output table:
+
+```
+streamDF.writeStream
+        .trigger()
+        .outputMode()
+        .option("checkpointLocation","/path")
+        .table("Output_Table")
+```
+
+#### .trigger()
+
+![query diagram](./databricks/trigger.png)
+
+#### .outputModes()
+
+![query diagram](./databricks/output.png)
+
+#### .option()
+
+- Check pointing
+    This stores the state of your streaming in cloud storage so that the status of your streaming can be tracked.
+    Checkpoints **cannot** be shared between separate streams.
+
+    1. Fault tolerance (checkpointing + write ahead logs)
+        These two will record which range of data go progressed during each trigger interval.
+        In case of failure, the streaming engine can resume where it left off.
+
+
+
+
