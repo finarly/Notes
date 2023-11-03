@@ -376,3 +376,39 @@ Also these other operations:
 
 
 ### Higher order functions and SQL UDFs (user defined functions)
+
+Higher order functions help us work with complex data types, such as hierarchical data e.g. arrays and map type objects.
+
+#### Filter
+
+Filter arrays by using some condition e.g. '>' or '=' etc.
+
+#### TRANSFORM
+
+Apply some sort of transformation for every value in a column for a particular element in the array
+
+#### UDF
+
+Create SQL functions (like python function)
+
+```
+CREATE OR REPLACE FUNCTION function_name(parameter data_type)
+RETURNs thing to return
+```
+
+
+
+```
+CREATE OR REPLACE FUNCTION get_url(email string)
+RETURNS STRING
+
+RETURN concat("https://www.",split(email,"@")[1])
+
+
+SELECT email, get_url(email) domain
+FROM customers
+```
+
+|email|domain|
+|---|---|
+|thomas.lane@gmail.com|https://www.gmail.com|
