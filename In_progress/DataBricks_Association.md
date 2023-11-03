@@ -295,3 +295,20 @@ e.g.
 SELECT customer_id, profile:first_name,profile:address:country
 FROM customers
 ```
+
+Spark also has ability to parse JSON objects into struct type. Struct is a native spart type with nested attributes. Using example above:
+
+```
+CREATE OR REPLACE TEMP VIEW parsed_customers AS
+    SELECT from_json(profile,schema_of_json('{"first_name":"Thomas","last_name":"Lane","gender":"Male","address":{"street":"06 Boulevard Victor Hugo","city":"Paris","country":"France"}}')) as profile_struct
+    FROM customers;
+
+SELECT * FROM parsed_customers
+```
+
+You can then query a struc type field with '.' rather than ':'
+
+```
+SELECT customers_id, profile_struct.first_name, profile_struct.address.country
+FROM parsed_customers
+```
