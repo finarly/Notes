@@ -217,7 +217,7 @@ Extract as raw bytes - when working with images or unstructured data:
 
 To load data from files to tables:
 
-\*CREATE TABLE table_name AS SELECT * FROM file_format.`/path/to/file`
+```CREATE TABLE table_name AS SELECT * FROM file_format.`` `/path/to/file` `` ```
 
 The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema, but is very limited with options.
 
