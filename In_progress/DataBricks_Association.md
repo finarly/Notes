@@ -471,15 +471,15 @@ streamDF.writeStream
 
 - Check pointing
     This stores the state of your streaming in cloud storage so that the status of your streaming can be tracked.
-    Checkpoints **cannot** be shared between separate streams.
+    Checkpoints **cannot** be shared between separate streams. A separate location is needed for every writeStream to ensure processing guarantees.
 
     - Guarantees
-
         1. Fault tolerance (checkpointing + write ahead logs):
             These two will record which range of data go progressed during each trigger interval.
             In case of failure, the streaming engine can resume where it left off.
 
-        2. Exactly 
+        2. Exactly-once guarantee: 
+
 
 
 
