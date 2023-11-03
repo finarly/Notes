@@ -286,12 +286,12 @@ WHEN NOT MATCHED THEN INSERT *
 Spark SQL allows you to traverse/parse JSON file formats and get to the nested values.
 
 e.g.
-```
+
 | profile |
 |---|
 |{"first_name":"Thomas","last_name":"Lane","gender":"Male","address":{"street":"06 Boulevard Victor Hugo","city":"Paris","country":"France"}}|
 
-
+```
 SELECT customer_id, profile:first_name,profile:address:country
 FROM customers
 ```
