@@ -278,10 +278,11 @@ ON c.customer_id = u.customer_id
 WHEN MATCHED AND c.email IS NULL AND u.email IS NOT NULL THEN
     UPDATE SET email = u.email, updated = u.updated
 WHEN NOT MATCHED THEN INSERT *
-
 ```
 
-### Advanced transformations 
+### Advanced transformations
+
+#### Parsing nested JSON  
 
 Spark SQL allows you to traverse/parse JSON file formats and get to the nested values.
 
@@ -306,9 +307,72 @@ CREATE OR REPLACE TEMP VIEW parsed_customers AS
 SELECT * FROM parsed_customers
 ```
 
-You can then query a struc type field with '.' rather than ':'
+You can then query a struct type field with '.' rather than ':'
 
 ```
 SELECT customers_id, profile_struct.first_name, profile_struct.address.country
 FROM parsed_customers
 ```
+
+You can also flatten the nested fields into columns by using '*'
+
+```
+CREATE OR REPLACE TEMP VIEW customers_final AS
+    SELECT profile_struct.*
+    FROM parsed_customers
+```
+
+#### Exploding array of struct type
+
+|Order_id|Customer_id|books|
+|---|---|---|
+|4243|C00002|[{"book_id":"B07","quantity":1,"subtotal":33},{"book_id":"B06","quantity":1,"subtotal":22}]|
+
+```
+SELECT customer_id, explode(books) AS book
+FROM orders
+```
+
+Outcome:
+
+|Order_id|Customer_id|books|
+|---|---|---|
+|4243|C00002|[{"book_id":"B07","quantity":1,"subtotal":33}]|
+|4243|C00002|[{"book_id":"B06","quantity":1,"subtotal":22}]|
+
+#### Collect_set
+
+Helps us collect unique values for a field, including fields within arrays.
+
+Using above example:
+
+```
+SELECT customer_id,
+    collect_set(books.book_id)
+FROM orders
+GROUP BY customer_id 
+```
+
+|Order_id|Customer_id|books|
+|---|---|---|
+|4243|C00002|["B07","B06"]|
+
+We can also use **array_distinct** and **flatten** function with **collect_set** to flatten all of the array within and find the unique values.
+
+#### Joins and Unions
+
+Spark supports standard join operations:
+- Inner
+- Outer
+- Left/Right
+- Cross
+- Semi 
+
+Also these other operations:
+- Union
+- Intersect (return records found in all involved select statements)
+- Minus (return records only found in the first table - kinda of like anti join)
+- Pivot (to change other data perspective)
+
+
+### Higher order functions and SQL UDFs (user defined functions)
