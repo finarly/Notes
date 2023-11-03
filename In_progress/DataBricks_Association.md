@@ -196,7 +196,7 @@ There are 2 types of tables:
 
 - External tables:
     - Created outside the database directory
-        -```CREATE TABLE table_name LOCATION 'path'```
+        -```CREATE TABLE table_name LOCATION `path` ```
     - The underlying data files will not be deleted when dropping the table.
 
 
@@ -208,16 +208,16 @@ There are 2 types of tables:
 
 
 Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
-- SELECT * FROM text.`` `/path/to/file` ``
+- ```SELECT * FROM text.`/path/to/file` ```
 - Example JSON:
-    - SELECT * FROM json.`` `/path/file_name.json` ``
+    - ```SELECT * FROM json.`/path/file_name.json` ```
 
 Extract as raw bytes - when working with images or unstructured data:
-- SELECT * FROM **binaryFile**.`` `/path/to/file` ``
+- ```SELECT * FROM **binaryFile**.`/path/to/file` ```
 
 To load data from files to tables:
 
-```CREATE TABLE table_name AS SELECT * FROM file_format. `/path/to/file` ```
+```CREATE TABLE table_name AS SELECT * FROM file_format.`/path/to/file` ```
 
 The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema, but is very limited with options.
 
