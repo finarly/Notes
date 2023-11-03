@@ -34,7 +34,7 @@ Databricks has 3 layers:
     - The data plane lives in the customer's account.
     - Since Apache Spark processes data in distributed manner, DBricks has a native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
 
-
+***
 
 ## Databricks Lakehouse Platform
 
@@ -199,6 +199,7 @@ There are 2 types of tables:
         -```CREATE TABLE table_name LOCATION `path` ```
     - The underlying data files will not be deleted when dropping the table.
 
+***
 
 ## ELT with Spark SQL and Python
 
