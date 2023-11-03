@@ -389,14 +389,12 @@ Apply some sort of transformation for every value in a column for a particular e
 
 #### UDF
 
-Create SQL functions (like python function)
+Create SQL functions (like python function). UDF are permanent objects and are persisted in the database like tables. 
 
 ```
-CREATE OR REPLACE FUNCTION function_name(parameter data_type)
+CREATE OR REPLACE FUNCTION udf_name(parameter data_type)
 RETURNs thing to return
 ```
-
-
 
 ```
 CREATE OR REPLACE FUNCTION get_url(email string)
@@ -412,3 +410,14 @@ FROM customers
 |email|domain|
 |---|---|
 |thomas.lane@gmail.com|https://www.gmail.com|
+
+
+You can get more information from running:
+
+```
+DESCRIBE FUNCTION udf_name
+```
+or
+```
+DESCRIBE FUNCTION EXTENDED udf_name
+```
