@@ -217,7 +217,7 @@ Extract as raw bytes - when working with images or unstructured data:
 
 To load data from files to tables:
 
-> CREATE TABLE table_name AS SELET * FROM file_format.`` `/path/to/file` ``
+\* CREATE TABLE table_name AS SELECT * FROM file_format.`/path/to/file`
 
 The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema, but is very limited with options.
 
@@ -241,14 +241,55 @@ The solution to this problem is:
 
 When writing to table, there are multiple benefits in overwriting the data, rather than dropping and creating a new table.
 Those are:
-- the old version of the table still exist, so it can be time travelled to
-- it is faster because it does not need to go to the directory recursively or delete any files
-- it is an atomic operation, concurrent queries can still read the table as you are overwriting it
-- if overwriting table fails, it will be in its table state
+- The old version of the table still exist, so it can be time travelled to
+- It is faster because it does not need to go to the directory recursively or delete any files
+- It is an atomic operation, concurrent queries can still read the table as you are overwriting it
+- If overwriting table fails, it will be in its table state
 
 
+#### Overwrite methods
+
+1. 
+```
+CREATE OR REPLACE TABLE table_name AS
+SELECT * FROM date_source.`path`
+```
+
+2. Can only overwrite an existing table, it is does not have the risk of change the table schema
+```
+INSERT OVERWRITE table_name AS
+SELECT * FROM data_source.`path`
+```
+
+#### Append records to table
+
+1. No built in guarantees for de-duplicating records
+```
+INSERT INTO table_name
+SELECT * FROM data_source.`path`
+``` 
+
+2. Guarantee for de-duplication using **MERGE**, example: 
+```
+MERGE INTO customers c
+USING customers_updates u 
+ON c.customer_id = u.customer_id
+WHEN MATCHED AND c.email IS NULL AND u.email IS NOT NULL THEN
+    UPDATE SET email = u.email, updated = u.updated
+WHEN NOT MATCHED THEN INSERT *
+
+```
+
+### Advanced transformations 
+
+Spark SQL allows you to traverse/parse JSON file formats and get to the nested values.
+
+e.g.
+```
+profile
+{"first_name":"Thomas","last_name":"Lane","gender":"Male","address":{"street":"06 Boulevard Victor Hugo","city":"Paris","country":"France"}}
 
 
-
-
-
+SELECT customer_id, profile:first_name,profile:address:country
+FROM customers
+```
