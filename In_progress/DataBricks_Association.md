@@ -379,7 +379,7 @@ Also these other operations:
 
 Higher order functions help us work with complex data types, such as hierarchical data e.g. arrays and map type objects.
 
-#### Filter
+#### FILTER
 
 Filter arrays by using some condition e.g. '>' or '=' etc.
 
@@ -421,3 +421,12 @@ or
 ```
 DESCRIBE FUNCTION EXTENDED udf_name
 ```
+
+You can return different things by combining it with a **CASE WHEN THEN** statement. 
+
+
+***
+
+## Incremental Data Processing
+
+### Structured Streaming 
