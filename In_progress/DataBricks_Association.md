@@ -479,6 +479,9 @@ streamDF.writeStream
             In case of failure, the streaming engine can resume where it left off.
 
         2. Exactly-once guarantee: 
+            Idempotent sinks: multiple writes of the same data do not result in duplicates written to the sink (the output table)
+    
+    These are only possible with repeatable data sources.
 
 
 
