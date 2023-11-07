@@ -617,7 +617,7 @@ Rules:
 
 - Table references:
     - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
-    - `STREAMING` keyworkd must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
+    - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
 
 - `ON VIOLATION` constraints:
     - `DROP ROW`: discards records that violates constraints
