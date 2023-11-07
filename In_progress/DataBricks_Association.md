@@ -569,3 +569,60 @@ The purpose of this layer is quick Change Data Capture (the process of identifyi
 #### Silver
 
 Data in **Silver** layer is the data from **Bronze** layer matched, merged, conformed, and cleansed (just enough) so that this layer can provide an "Enterprise View" of all its key business entities, concepts, and transactions (e.g. master customers, stores etc.)
+
+***
+
+## Production Pipelines
+
+### Delta Live Tables (DLT)
+
+DLT is a framework for building reliable and maintainable data processing pipelines, it provides a diagrams that shows your multi-hop architecture and it's dependencies. They are created by using databricks notebooks.
+
+- DLT tables will always be proceeded by `LIVE` keyword
+- Incremental processing via auto loader needs `STREAMING` keyword
+- Comment is visible to anyone exploreing the data catalog
+
+#### Bronze tables
+
+```
+CREATE OR REFRESH STREAMING LIVE TABLE orders_raw
+COMMENT "The raw books orders, ingested from orders-raw"
+AS SELECT * FROM cloud_files("${datasets_path}/orders-json-raw", "json",
+                             map("cloudFiles.inferColumnTypes", "true"))
+```
+
+```
+CREATE OR REFRESH LIVE TABLE customers
+COMMENT "The customers lookup table, ingested from customers-json"
+AS SELECT * FROM json.`${datasets_path}/customers-json`
+```
+
+#### Silver tables
+
+```
+CREATE OR REFRESH STREAMING LIVE TABLE orders_cleaned (
+  CONSTRAINT valid_order_number EXPECT (order_id IS NOT NULL) ON VIOLATION DROP ROW
+)
+COMMENT "The cleaned books orders with valid order_id"
+AS
+  SELECT order_id, quantity, o.customer_id, c.profile:first_name as f_name, c.profile:last_name as l_name,
+         cast(from_unixtime(order_timestamp, 'yyyy-MM-dd HH:mm:ss') AS timestamp) order_timestamp, o.books,
+         c.profile:address:country as country
+  FROM STREAM(LIVE.orders_raw) o
+  LEFT JOIN LIVE.customers c
+    ON o.customer_id = c.customer_id
+```
+
+Rules:
+
+- Table references:
+    - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
+    - `STREAMING` keyworkd must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
+
+- `ON VIOLATION` constraints:
+    - `DROP ROW`: discards records that violates constraints
+    - `FAIL UPDATE`: violation causes pipeline to fail
+    - `OMITTED`: violation records will be kept but reported in metrics
+
+#### Gold tables
+
