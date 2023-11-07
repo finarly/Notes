@@ -493,3 +493,67 @@ Workarounds:
 - Windowing
 - Watermarking
 
+
+### Incremental Data Ingestion
+
+The ability to load new files since the last ingestion. We don't want to process the files we have processed before, just the new ones.
+
+There are 2 ways of doing so:
+- ```COPY INTO```
+    - Thousands of files
+    - Less efficient at scale
+- Auto loader
+    - Millions of files
+    - Efficient at scale
+    - The recommended when loading from Cloud Object Storage 
+
+#### COPY INTO
+
+This is a SQL command that loads only the new files from the source location when you run it. The files that have been loaded before are just skipped. 
+
+Example:
+```
+COPY INTO my_table
+FROM `/path/to/files`
+FILEFORMAT = CSV
+FORMAT_OPTIONS ('delimiter' = '|',
+                'header' = 'true')
+COPY_OPTIONS ('mergeSchema'='true')
+```
+
+#### Auto loader
+
+Uses structured streaming to process billions of files and support near real time ingestion of millions of files per hour. 
+
+Auto loader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance. 
+
+AL in PySparkAPI
+```
+spark.readStream
+        .format('cloudFiles')
+        .option('cloudFiles.format',<source_format>)
+        .load('/path/to/files')
+    .writeStream
+        .option('checkpointLocation',<checkpoint_directory>)
+        .table(<table_name>)
+```
+
+AL can automatically infer the structure of the schema of the source table, and can detect any updates to source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.* 
+
+```
+spark.readStream
+        .format('cloudFiles')
+        .option('cloudFiles.format',<source_format>)
+        .option('cloudFiles.schemaLocation',<schema_directory>)
+        .load('/path/to/files')
+    .writeStream
+        .option('checkpointLocation',<checkpoint_directory>)
+        .option('mergeSchema','true')
+        .table(<table_name>)
+```
+
+### Multi-Hop Architecture (aka Medallion Architecture)
+
+Medallion Architecture type is used to logically organise data in a lakehouse, with a goal of incrementally improves the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture. 
+
+![query diagram](./databricks/Multi-hop.png)
