@@ -554,6 +554,18 @@ spark.readStream
 
 ### Multi-Hop Architecture (aka Medallion Architecture)
 
-Medallion Architecture type is used to logically organise data in a lakehouse, with a goal of incrementally improves the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture. 
+Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture. 
 
 ![query diagram](./databricks/Multi-hop.png)
+
+It is a simple data modle that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
+
+#### Bronze
+
+Data as is, but include metadata columns such as load date/time, process ID, etc. 
+
+The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, auditability, reporcessing if needed without rereading the data from the source system (effectively being source data).
+
+#### Silver
+
+Data in **Silver** layer is the data from **Bronze** layer matched, merged, conformed, and cleansed (just enough) so that this layer can provide an "Enterprise View" of all its key business entities, concepts, and transactions (e.g. master customers, stores etc.)
