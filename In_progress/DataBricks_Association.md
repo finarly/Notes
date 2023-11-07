@@ -173,9 +173,9 @@ In Databricks, a database is a schema in Hive meta-store, therefore:
 CREATE DATABASE db_name = CREATE SCHEMA db_name
 ```
 
-Hive meta-store is a repository of metadata, which holds metadata about your table and data. 
+Hive meta-store is a repository of metadata, which holds metadata about your table and data.
 
-The default database location is in the default hive directory: *dbfs:/user/hive/warehouse* 
+The default database location is in the default hive directory: *dbfs:/user/hive/warehouse*
 
 You can create databases outside of this using **LOCATION** command.
 
@@ -297,7 +297,7 @@ SELECT customer_id, profile:first_name,profile:address:country
 FROM customers
 ```
 
-Spark also has ability to parse JSON objects into struct type. Struct is a native spart type with nested attributes. Using example above:
+Spark also has ability to parse JSON objects into struct type. Struct is a native spark type with nested attributes. Using example above:
 
 ```
 CREATE OR REPLACE TEMP VIEW parsed_customers AS
@@ -366,7 +366,7 @@ Spark supports standard join operations:
 - Outer
 - Left/Right
 - Cross
-- Semi 
+- Semi
 
 Also these other operations:
 - Union
@@ -389,7 +389,7 @@ Apply some sort of transformation for every value in a column for a particular e
 
 #### UDF
 
-Create SQL functions (like python function). UDF are permanent objects and are persisted in the database like tables. 
+Create SQL functions (like python function). UDF are permanent objects and are persisted in the database like tables.
 
 ```
 CREATE OR REPLACE FUNCTION udf_name(parameter data_type)
@@ -509,7 +509,7 @@ There are 2 ways of doing so:
 
 #### COPY INTO
 
-This is a SQL command that loads only the new files from the source location when you run it. The files that have been loaded before are just skipped. 
+This is a SQL command that loads only the new files from the source location when you run it. The files that have been loaded before are just skipped.
 
 Example:
 ```
@@ -523,9 +523,9 @@ COPY_OPTIONS ('mergeSchema'='true')
 
 #### Auto loader
 
-Uses structured streaming to process billions of files and support near real time ingestion of millions of files per hour. 
+Uses structured streaming to process billions of files and support near real time ingestion of millions of files per hour.
 
-Auto loader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance. 
+Auto loader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance.
 
 AL in PySparkAPI
 ```
@@ -538,7 +538,7 @@ spark.readStream
         .table(<table_name>)
 ```
 
-AL can automatically infer the structure of the schema of the source table, and can detect any updates to source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.* 
+AL can automatically infer the structure of the schema of the source table, and can detect any updates to source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.*
 
 ```
 spark.readStream
@@ -558,13 +558,13 @@ Medallion Architecture is used to logically organise data in a lakehouse, with a
 
 ![query diagram](./databricks/Multi-hop.png)
 
-It is a simple data modle that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
+It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
 
 #### Bronze
 
-Data as is, but include metadata columns such as load date/time, process ID, etc. 
+Data as is, but include metadata columns such as load date/time, process ID, etc.
 
-The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, auditability, reporcessing if needed without rereading the data from the source system (effectively being source data).
+The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, audit-ability, reprocessing if needed without rereading the data from the source system (effectively being source data).
 
 #### Silver
 
@@ -580,7 +580,11 @@ DLT is a framework for building reliable and maintainable data processing pipeli
 
 - DLT tables will always be proceeded by `LIVE` keyword
 - Incremental processing via auto loader needs `STREAMING` keyword
-- Comment is visible to anyone exploreing the data catalog
+- Comment is visible to anyone exploring the data catalog
+
+#### Creating new pipeline
+
+Click "Workflows" > select "Delta Live Tables" tab > "Create pipeline"
 
 #### Bronze tables
 
@@ -626,3 +630,12 @@ Rules:
 
 #### Gold tables
 
+```
+CREATE OR REFRESH LIVE TABLE cn_daily_customer_books
+COMMENT "Daily number of books per customer in China"
+AS
+  SELECT customer_id, f_name, l_name, date_trunc("DD", order_timestamp) order_date, sum(quantity) books_counts
+  FROM LIVE.orders_cleaned
+  WHERE country = "China"
+  GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
+```
