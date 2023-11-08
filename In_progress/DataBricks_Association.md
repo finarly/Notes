@@ -5,6 +5,7 @@ l# DataBricks Learning
 Databricks is a multi-cloud lake-house platform based on Apache Spark. It aims to achieve the best of both worlds between data warehouses and data lake.
 - Data lakes are known to be more open, flexible, and support ML better (as it benefits from raw data).
 - Data warehouses are known to be more reliable, has strong governance, and performance very well when queried.
+zz
 
 Because it is built off Spark, the compute is done in the memory of multiple nodes in a cluster. it also supports **Batch** and **Stream** Processing, and can work with **Structured**, **Semi-Structured**, and **Unstructured** data.
 
@@ -617,9 +618,9 @@ AS
 
 Definition and rules:
 
-A **streaming table** is a Delta Table with extra support for streaming or incremental data processing. These tables are designed to need data sources that are append-only. 
+A **streaming table** is a Delta Table with extra support for streaming or incremental data processing by allowing you to process a growing dataset, handling each row only once. These tables are designed to need data sources that are append-only.
 
-A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with sheduling.
+A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with sheduling. They are powerful because they can handle changes in the source.
 
 
 - Table references:
@@ -643,7 +644,6 @@ AS
   GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
 ```
 
-
 ### Change Data Capture (CDC)
 
 CDC is the process of identifying what has changed in the source and delivering these changes to the target. The changes to be delivered are called CDC feed.zxc
@@ -657,21 +657,21 @@ Changes are logged at the source as events that contain both data and metadata i
 
 #### CDC with Delta Live Tables
 
-- APPLY CHANGES INTO command
-    - target_table = the table which will be receiving the feed and updating it's data. *This table needs to be create already before executing command.*
-    - key_field = primary keys; if key exists in target table, it'll be updated, if not then inserted
-    - APPLY AS DELETE WHEN = specifies when records should be deleted 
-    - sequence_field = 
-    - COLUMNS = all the columns that are going to flow through to the target table
-
 ```
 APPLY CHANGES INTO LIVE.target_table
 FROM STREAM(LIVE.cdc_feed_table)
 KEYS (key_field)
 APPLY AS DELETE WHEN operation_field = "DELETE"
 SEQUENCE BY sequence_field
-COLUMNS *
+COLUMNS * [EXCEPT (column_name,...)]
 ```
+
+- APPLY CHANGES INTO command
+    - target_table = the table which will be receiving the feed and updating it's data. *This table needs to be create already before executing command.*
+    - key_field = primary keys; if key exists in target table, it'll be updated, if not then inserted
+    - APPLY AS DELETE WHEN = specifies when records should be deleted 
+    - sequence_field = 
+    - COLUMNS = all the columns that are going to flow through to the target table
 
 |Pros|Cons|
 |---|---|
@@ -681,4 +681,14 @@ COLUMNS *
 |Specify one or more fields as primary key||
 |EXCEPT keyword to specify which columns to ignore||
 |Support SCD Type 1 (default) and SCD Type 2||
+
+**DLT VIEWS can reference other tables created in other notebooks**
+
+### Jobs
+
+A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies. Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
+
+### Databricks SQL (DB SQL)
+
+DB SQL is a serverless datawarehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collborations 
 
