@@ -690,5 +690,38 @@ A Databricks job is a way to run your data processing and analysis applications 
 
 ### Databricks SQL (DB SQL)
 
-DB SQL is a serverless datawarehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collborations 
+DB SQL is a serverless datawarehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collborations. 
+
+It's a way to use it like a SQL Server or Synapse, without having to go through notebooks. 
+
+***
+
+## Data Object Privileges
+
+You can programtically set and alter prvileges
+
+```
+GRANT privilege ON object <object_name> TO <user or group>
+```
+
+Example:
+```
+GRANT SELECT ON TABLE my_table TO user_1@company.com
+```
+
+`privilege` consists of:
+- SELECT: read access to an object
+- MODIFY: add, delete, and modigy data to or from an object
+- CREATE: create an object
+- READ_METADATA: view an object and its metadata
+- USAGE: no effect, required to perform any action on a database object
+- ALL PRIVILEGES: self explanatory
+
+`object` specifies access to:
+- CATALOG: to entire catalog
+- SCHEMAL: to database
+- TABLE: to managed or external table
+- VIEW: to SQL view
+- FUNCTION: to named function
+- ANY FILE: to underlying filesystem
 
