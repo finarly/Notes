@@ -438,7 +438,6 @@ To process a data stream you can:
 2. Only process those new data added since last update
     - Structured streaming
 
-
 Structured stream is create a stream of data from an source (e.g. input table) to a data sink (e.g. output table).
 There will be a trigger which will check the input table for any new data.
 
@@ -492,7 +491,6 @@ Unsupported:
 Workarounds:
 - Windowing
 - Watermarking
-
 
 ### Incremental Data Ingestion
 
@@ -554,7 +552,7 @@ spark.readStream
 
 ### Multi-Hop Architecture (aka Medallion Architecture)
 
-Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture. 
+Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
 
 ![query diagram](./databricks/Multi-hop.png)
 
@@ -576,7 +574,7 @@ Data in **Silver** layer is the data from **Bronze** layer matched, merged, conf
 
 ### Delta Live Tables (DLT)
 
-DLT is a framework for building reliable and maintainable data processing pipelines, it provides a diagrams that shows your multi-hop architecture and it's dependencies. They are created by using databricks notebooks.
+DLT is a framework for building reliable and maintainable data processing pipelines, it provides a Directed Acyclic Graph (DAG) that shows your multi-hop architecture and it's dependencies. They are created by using databricks notebooks. So therefore, instead of using a series of separate Apache Spark tasks, you define the tables you need and DLT manages it for you depending on your input configurations.
 
 - DLT tables will always be proceeded by `LIVE` keyword
 - Incremental processing via auto loader needs `STREAMING` keyword
@@ -617,7 +615,12 @@ AS
     ON o.customer_id = c.customer_id
 ```
 
-Rules:
+Definition and rules:
+
+A **streaming table** is a Delta Table with extra support for streaming or incremental data processing. These tables are designed to need data sources that are append-only. 
+
+A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with sheduling.
+
 
 - Table references:
     - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
@@ -639,3 +642,43 @@ AS
   WHERE country = "China"
   GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
 ```
+
+
+### Change Data Capture (CDC)
+
+CDC is the process of identifying what has changed in the source and delivering these changes to the target. The changes to be delivered are called CDC feed.zxc
+
+Changes could be:
+- Inserting new data
+- Updating existing data
+- Deleting existing data
+
+Changes are logged at the source as events that contain both data and metadata information (e.g. the data and also columns describing the change and timestamp)
+
+#### CDC with Delta Live Tables
+
+- APPLY CHANGES INTO command
+    - target_table = the table which will be receiving the feed and updating it's data. *This table needs to be create already before executing command.*
+    - key_field = primary keys; if key exists in target table, it'll be updated, if not then inserted
+    - APPLY AS DELETE WHEN = specifies when records should be deleted 
+    - sequence_field = 
+    - COLUMNS = all the columns that are going to flow through to the target table
+
+```
+APPLY CHANGES INTO LIVE.target_table
+FROM STREAM(LIVE.cdc_feed_table)
+KEYS (key_field)
+APPLY AS DELETE WHEN operation_field = "DELETE"
+SEQUENCE BY sequence_field
+COLUMNS *
+```
+
+|Pros|Cons|
+|---|---|
+|Automatically orders late arriving records using the KEYS provided. Updates and deletions from upstream will be reflected downstream computations.|Since data is being updated and deleted in the target table, this breaks the append-only requirements for streaming table sources. This means we cannot use this target table as a source in the next layer|
+|The default is 'upsert'||
+|Can optionally appy deletes||
+|Specify one or more fields as primary key||
+|EXCEPT keyword to specify which columns to ignore||
+|Support SCD Type 1 (default) and SCD Type 2||
+
