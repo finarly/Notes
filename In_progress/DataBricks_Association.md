@@ -461,11 +461,11 @@ streamDF.writeStream
 
 #### .trigger()
 
-![query diagram](./databricks/trigger.png)
+![triggers](./databricks/trigger.png)
 
 #### .outputModes()
 
-![query diagram](./databricks/output.png)
+![output_modes](./databricks/output.png)
 
 #### .option()
 
@@ -555,7 +555,7 @@ spark.readStream
 
 Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
 
-![query diagram](./databricks/Multi-hop.png)
+![multi-hop diagram](./databricks/Multi-hop.png)
 
 It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
 
@@ -698,7 +698,7 @@ It's a way to use it like a SQL Server or Synapse, without having to go through 
 
 ## Data Object Privileges
 
-You can programtically set and alter prvileges
+You can programtically set and alter prvileges.
 
 ```
 GRANT privilege ON object <object_name> TO <user or group>
@@ -708,6 +708,12 @@ Example:
 ```
 GRANT SELECT ON TABLE my_table TO user_1@company.com
 ```
+
+operations are:
+- GRANT 
+- DENY
+- REVOKE 
+- SHOW GRANTS
 
 `privilege` consists of:
 - SELECT: read access to an object
@@ -724,4 +730,8 @@ GRANT SELECT ON TABLE my_table TO user_1@company.com
 - VIEW: to SQL view
 - FUNCTION: to named function
 - ANY FILE: to underlying filesystem
+
+#### Granting privileges by role
+
+![role privileges](./databricks/privileges_role.png)
 
