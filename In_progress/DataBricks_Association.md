@@ -168,7 +168,7 @@ SELECT * FROM global_temp.view_name
 
 #### Databases
 
-In Databricks, a database is a schema in Hive meta-store, therefore:
+In Databricks, a **database** is a **schema** in Hive meta-store, therefore:
 
 ```
 CREATE DATABASE db_name = CREATE SCHEMA db_name
@@ -765,7 +765,10 @@ SELECT * FROM catalog.schema.table
 
 #### Hierarchy
 
-The UC Metasotre is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
+The UC Metastore is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
 
-Unity Metastore ≠ Hive Metastore
+**Unity Metastore ≠ Hive Metastore**
 
+Hive metastore is the default metastore linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive metastore. Hive metastore is sometime considered "legacy"
+
+![UC hierarchy](./databricks/UC_hierarchy.png)
