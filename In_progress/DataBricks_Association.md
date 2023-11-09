@@ -696,7 +696,9 @@ It's a way to use it like a SQL Server or Synapse, without having to go through 
 
 ***
 
-## Data Object Privileges
+## Data Governance
+
+### Data Object Privileges
 
 You can programtically set and alter prvileges.
 
@@ -772,3 +774,42 @@ The UC Metastore is the top level container in the unity catalog. It contains in
 Hive metastore is the default metastore linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive metastore. Hive metastore is sometime considered "legacy"
 
 ![UC hierarchy](./databricks/UC_hierarchy.png)
+
+
+#### Identities
+
+There are 3 types of identities/principals in Unity Catalog:
+- Users: are individual physical users which are identified by email addresses.
+- Service Principals: individual entity for automated tools and systems like scripts, apps, CICD platforms. They are uniquely identified by Application ID.
+    - Databricks recommends using a service principal and it's OAuth token or personal access token instead of your Databricks user account and personal access token.
+- Groups: grouping Users and Service Principals.
+
+
+#### Identity Federation
+
+Identities exists at two levels: account and workspace-level
+
+Unity Catalog supports Identity Federation, which means you create it in the account console once and it can be assigned to one or more workspaces as necessary.
+
+#### Privileges
+
+|Privilege||
+|---|---|
+|CREATE, USAGE, SELECT, MODIFY |Same as hive metastore|
+|READ FILE, WRITE FILE|Replaces ANY FILE privilege in hive metastore|
+|EXECUTE|Allow executing UDFs|
+
+#### Security Model Summary
+
+![Security model](./databricks/Security%20Model.png)
+
+Unity Catalog is additive, meaning your legacy Hive metastore is still accessible once Unity Catalog is enabled. You can access it as *hive_metastore* catalog regardless of the Unity Catalog assigned to the workspace. 
+
+![Security model](./databricks/legacy.png)
+
+#### Other features
+
+Other than a centralised governance for data and AI, Unity Catalog has a built in data search and discovery. It lets you tag and document data asssets, and provides a search interace to help users find data.
+
+It also provides automated lineage where you can identify the origin of your data and where it is used by capturing and using user-level audit logs that record access to data.
+
