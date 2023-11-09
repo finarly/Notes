@@ -767,5 +767,5 @@ SELECT * FROM catalog.schema.table
 
 The UC Metasotre is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
 
-Unity Metastore \neq Hive Metastore
+$Unity Metastore ≠ Hive Metastore$
 
