@@ -763,8 +763,8 @@ SELECT * FROM catalog.schema.table
 ```
 
 
-#### Hierarhcy
+#### Hierarchy
 
 The UC Metasotre is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
 
-Unity Metatsore != $unity_metastore \neq hive $
+ $Unity Metastore \neq Hive Metatstore $
