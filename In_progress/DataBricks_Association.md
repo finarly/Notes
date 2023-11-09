@@ -37,7 +37,7 @@ Databricks has 3 layers:
 
 ***
 
-## Databricks Lakehouse Platform
+## Databricks Lake-house Platform
 
 Delta lake is an open-source software that provides the foundation for storing data and tables in the Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
 
@@ -45,13 +45,11 @@ It is a storage framework that helps data lakes become lake house.
 
 The data held in delta tables are stored in one or more files in parquet format, alongside a **Transaction Log**.
 
-
 ### Delta Lake
 
 ### Transaction log
 
 This is a JSON file which has ordered record of every transaction performed on the table. This is the single source of truth. 
-
 
 ### Advanced Delta Lake features
 
@@ -199,6 +197,38 @@ There are 2 types of tables:
     - Created outside the database directory
         -```CREATE TABLE table_name LOCATION `path` ```
     - The underlying data files will not be deleted when dropping the table.
+
+
+### Clusters
+
+#### Types
+
+- All-purpose
+    - These serve the notebooks
+    - You can create these from the Workspace or using APIs
+    - Up to 70 clusters can be retained for up to 30 days
+- Job Cluster
+    - These ones are spun up by Databricks Job Scheduler when running automated jobs
+    - Information up to the 30 most recent terminated clusters are retained
+
+#### Modes
+Cluster modes:
+- Standard (multi-node): requires at least 2 VM instances
+- Single node: low-cost single instance cluster
+
+#### Databricks runtime versionszxc
+- Standard: Apache Spark and other components, optimised for big data analytics
+- Machine learning: Adds popular ML libraries (e.g.TensorFlow,Keras,PyTorch, and XGBoost)
+- Photon: Optional add on to optimise SQL workloads
+
+#### Access
+
+|Mode|Visible to user|Unity Catalog Support|Supported Languages|
+|---|---|---|---|
+|Single User|Always|Yes|Python, SQL, Scala, R|
+|Shared|Always (Premium planed required)|Yes|Python (DBR11.1+),SQL|
+|No Isolation shared|Can be hidden through config|No|Python, SQL, Scala, R|
+|Custom|Only shown for existing clusters without access modes (i.e. legacy cluster modes, Standard or High Concurrency); not an option for creating new clusters|No|^^|
 
 ***
 
