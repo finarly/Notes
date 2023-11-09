@@ -216,9 +216,9 @@ Cluster modes:
 - Standard (multi-node): requires at least 2 VM instances
 - Single node: low-cost single instance cluster
 
-#### Databricks runtime versionszxc
+#### Databricks runtime versions
 - Standard: Apache Spark and other components, optimised for big data analytics
-- Machine learning: Adds popular ML libraries (e.g.TensorFlow,Keras,PyTorch, and XGBoost)
+- Machine learning: Adds popular ML libraries (e.g.TensorFlow, Keras, PyTorch, and XGBoost)
 - Photon: Optional add on to optimise SQL workloads
 
 #### Access
@@ -226,9 +226,20 @@ Cluster modes:
 |Mode|Visible to user|Unity Catalog Support|Supported Languages|
 |---|---|---|---|
 |Single User|Always|Yes|Python, SQL, Scala, R|
-|Shared|Always (Premium planed required)|Yes|Python (DBR11.1+),SQL|
+|Shared|Always (Premium planed required) - there are certain things disabled|Yes|Python (DBR11.1+),SQL|
 |No Isolation shared|Can be hidden through config|No|Python, SQL, Scala, R|
 |Custom|Only shown for existing clusters without access modes (i.e. legacy cluster modes, Standard or High Concurrency); not an option for creating new clusters|No|^^|
+
+
+#### Policies
+
+Cluster policies can:
+- Standardise cluster configs
+- Provide templates for configs
+- Prevent excessive use and control cost
+- Enforce correct tagging
+
+![role privileges](./databricks_images/cluster_ac.png)
 
 ***
 
@@ -236,7 +247,7 @@ Cluster modes:
 
 ### Querying files
 
-![query diagram](./databricks/Screenshot%202023-11-01%20000422.png)
+![query diagram](./databricks_images/Screenshot%202023-11-01%20000422.png)
 
 
 Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
@@ -491,11 +502,11 @@ streamDF.writeStream
 
 #### .trigger()
 
-![triggers](./databricks/trigger.png)
+![triggers](./databricks_images/trigger.png)
 
 #### .outputModes()
 
-![output_modes](./databricks/output.png)
+![output_modes](./databricks_images/output.png)
 
 #### .option()
 
@@ -585,7 +596,7 @@ spark.readStream
 
 Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
 
-![multi-hop diagram](./databricks/Multi-hop.png)
+![multi-hop diagram](./databricks_images/Multi-hop.png)
 
 It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
 
@@ -765,7 +776,7 @@ operations are:
 
 #### Granting privileges by role
 
-![role privileges](./databricks/privileges_role.png)
+![role privileges](./databricks_images/privileges_role.png)
 
 
 ### Unity Catalog
@@ -778,7 +789,7 @@ Unity catalog is a SQL based centralised governance solution across all your wor
 
 #### Architecture
 
-![catalog architecture](./databricks/unity%20catalog.png)
+![catalog architecture](./databricks_images/unity%20catalog.png)
 
 This architecture means that Unity Catalog sits outside of the workspace and all user/group management, metastores, and access controls are managed through the account console.
 
@@ -803,7 +814,7 @@ The UC Metastore is the top level container in the unity catalog. It contains in
 
 Hive metastore is the default metastore linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive metastore. Hive metastore is sometime considered "legacy"
 
-![UC hierarchy](./databricks/UC_hierarchy.png)
+![UC hierarchy](./databricks_images/UC_hierarchy.png)
 
 
 #### Identities
@@ -831,11 +842,11 @@ Unity Catalog supports Identity Federation, which means you create it in the acc
 
 #### Security Model Summary
 
-![Security model](./databricks/Security%20Model.png)
+![Security model](./databricks_images/Security%20Model.png)
 
 Unity Catalog is additive, meaning your legacy Hive metastore is still accessible once Unity Catalog is enabled. You can access it as *hive_metastore* catalog regardless of the Unity Catalog assigned to the workspace. 
 
-![Security model](./databricks/legacy.png)
+![Security model](./databricks_images/legacy.png)
 
 #### Other features
 
