@@ -735,3 +735,36 @@ operations are:
 
 ![role privileges](./databricks/privileges_role.png)
 
+
+### Unity Catalog
+
+Unity catalog is a SQL based centralised governance solution across all your workspaces on any cloud. It provides unified governance for all data and AI assets including:
+- files,
+- tables,
+- machine leaning models,
+- and dashboards
+
+#### Architecture
+
+![catalog architecture](./databricks/unity%20catalog.png)
+
+This architecture means that Unity Catalog sits outside of the workspace and all user/group management, metastores, and access controls are managed through the account console.
+
+A UC metastore can be assigned to more than one workspace, enabling multiple workspaces to share the same DBFS storage and same access control list.
+
+Traditional namespace
+```
+SELECT * FROM schema.table
+```
+
+Databricks namespace
+```
+SELECT * FROM catalog.schema.table
+```
+
+
+#### Hierarhcy
+
+The UC Metasotre is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
+
+Unity Metatsore != $unity_metastore \neq hive $
