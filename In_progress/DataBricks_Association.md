@@ -5,7 +5,7 @@ l# DataBricks Learning
 Databricks is a multi-cloud lake-house platform based on Apache Spark. It aims to achieve the best of both worlds between data warehouses and data lake.
 - Data lakes are known to be more open, flexible, and support ML better (as it benefits from raw data).
 - Data warehouses are known to be more reliable, has strong governance, and performance very well when queried.
-zz
+
 
 Because it is built off Spark, the compute is done in the memory of multiple nodes in a cluster. it also supports **Batch** and **Stream** Processing, and can work with **Structured**, **Semi-Structured**, and **Unstructured** data.
 
