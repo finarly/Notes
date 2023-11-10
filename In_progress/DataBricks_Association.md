@@ -3,11 +3,10 @@ l# DataBricks Learning
 ## Overview
 
 Databricks is a multi-cloud lake-house platform based on Apache Spark. It aims to achieve the best of both worlds between data warehouses and data lake.
-- Data lakes are known to be more open, flexible, and support ML better (as it benefits from raw data).
-- Data warehouses are known to be more reliable, has strong governance, and performance very well when queried.
+- Data lakes are known to be more open, and flexible, and support ML better (as it benefits from raw data).
+- Data warehouses are known to be more reliable, have strong governance, and performance very well when queried.
 
-
-Because it is built off Spark, the compute is done in the memory of multiple nodes in a cluster. it also supports **Batch** and **Stream** Processing, and can work with **Structured**, **Semi-Structured**, and **Unstructured** data.
+Because it is built off Spark, the computing is done in the memory of multiple nodes in a cluster. it also supports **Batch** and **Stream** Processing, and can work with **Structured**, **Semi-Structured**, and **Unstructured** data.
 
 It supports all languages supported by Spark:
 - Scala
@@ -22,7 +21,11 @@ Databricks has 3 layers:
 
 1. Cloud Service: AWS, Azure, GCP etc.
 2. Runtime: Apache Spark and Delta Lake
-3. Workspace: databricks GUI
+3. Workspace: Databricks GUI
+
+
+![architecture](./databricks_images/databricks-architecture-aws.png)
+
 
 
 ### Data resource deployment view
@@ -31,15 +34,15 @@ Databricks has 3 layers:
     - The control plane lives in the Databrick's account,  
 
 - Data plane: cluster of VMs, Storage (DBFS)
-    - Compute and storage will always be in the customer's account. DB will provide tool to use and control infrastructure.
+    - Compute and storage will always be in the customer's account. DB will provide a tool to use and control infrastructure.
     - The data plane lives in the customer's account.
-    - Since Apache Spark processes data in distributed manner, DBricks has a native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
+    - Since Apache Spark processes data in a distributed manner, DBricks has native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
 
 ***
 
 ## Databricks Lake-house Platform
 
-Delta lake is an open-source software that provides the foundation for storing data and tables in the Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
+Delta lake is an open-source software that provides the foundation for storing data and tables in Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
 
 It is a storage framework that helps data lakes become lake house.
 
@@ -49,13 +52,13 @@ The data held in delta tables are stored in one or more files in parquet format,
 
 ### Transaction log
 
-This is a JSON file which has ordered record of every transaction performed on the table. This is the single source of truth. 
+This JSON file has ordered records of every transaction performed on the table. This is the single source of truth. 
 
 ### Advanced Delta Lake features
 
 #### Time Travel
 
-In Databricks, every iteration of the table is versioned, this allows you to look back into time of a table.
+In Databricks, every iteration of the table is versioned, this allows you to look back in time of a table.
 
 To see the history of a table:
 > DESCRIBE HISTORY
@@ -250,7 +253,7 @@ Cluster policies can:
 ![query diagram](./databricks_images/Screenshot%202023-11-01%20000422.png)
 
 
-Extract as raw strings - when working with text based files (e.g. JSON, CSV, TSV, and TXT)
+Extract as raw strings - when working with text-based files (e.g. JSON, CSV, TSV, and TXT)
 - ```SELECT * FROM text.`/path/to/file` ```
 - Example JSON:
     - ```SELECT * FROM json.`/path/file_name.json` ```
@@ -262,7 +265,7 @@ To load data from files to tables:
 
 ```CREATE TABLE table_name AS SELECT * FROM file_format.`/path/to/file` ```
 
-The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema, but is very limited with options.
+The table will automatically infer schema information from query results. CTAS are useful for external data ingestion with well-defined schema but is very limited with options.
 
 That is why we use the normal table creation statement.
 
@@ -274,20 +277,20 @@ OPTIONS (key1 = val1,key2=val2,...)
 LOCATION = path
 ```
 
-With these commands we are always create an external table, therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
+With these commands we always create an external table, therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
 
 The solution to this problem is:
-1. Create a temporary view using create table method
+1. Create a temporary view using the create table method
 2. Create a table using CTAS using the temporary view in step 1.
 
 ### Writing to tables
 
-When writing to table, there are multiple benefits in overwriting the data, rather than dropping and creating a new table.
+When writing to a table, there are multiple benefits in overwriting the data, rather than dropping and creating a new table.
 Those are:
-- The old version of the table still exist, so it can be time travelled to
+- The old version of the table still exists, so it can be time travelled to
 - It is faster because it does not need to go to the directory recursively or delete any files
 - It is an atomic operation, concurrent queries can still read the table as you are overwriting it
-- If overwriting table fails, it will be in its table state
+- If overwriting the table fails, it will be in its table state
 
 
 #### Overwrite methods
@@ -298,7 +301,7 @@ CREATE OR REPLACE TABLE table_name AS
 SELECT * FROM date_source.`path`
 ```
 
-2. Can only overwrite an existing table, it is does not have the risk of change the table schema
+2. Can only overwrite an existing table, it does not have the risk of changing the table schema
 ```
 INSERT OVERWRITE table_name AS
 SELECT * FROM data_source.`path`
@@ -306,13 +309,13 @@ SELECT * FROM data_source.`path`
 
 #### Append records to table
 
-1. No built in guarantees for de-duplicating records
+1. No built-in guarantees for de-duplicating records
 ```
 INSERT INTO table_name
 SELECT * FROM data_source.`path`
 ``` 
 
-2. Guarantee for de-duplication using **MERGE**, example: 
+2. Guarantee for de-duplication using **MERGE**, for example: 
 ```
 MERGE INTO customers c
 USING customers_updates u 
@@ -339,7 +342,7 @@ SELECT customer_id, profile:first_name,profile:address:country
 FROM customers
 ```
 
-Spark also has ability to parse JSON objects into struct type. Struct is a native spark type with nested attributes. Using example above:
+Spark also has the ability to parse JSON objects into struct type. Struct is a native spark type with nested attributes. Using example above:
 
 ```
 CREATE OR REPLACE TEMP VIEW parsed_customers AS
@@ -384,9 +387,9 @@ Outcome:
 
 #### Collect_set
 
-Helps us collect unique values for a field, including fields within arrays.
+It helps us collect unique values for a field, including fields within arrays.
 
-Using above example:
+Using the above example:
 
 ```
 SELECT customer_id,
@@ -399,7 +402,7 @@ GROUP BY customer_id
 |---|---|---|
 |4243|C00002|["B07","B06"]|
 
-We can also use **array_distinct** and **flatten** function with **collect_set** to flatten all of the array within and find the unique values.
+We can also use **array_distinct** and **flatten** functions with **collect_set** to flatten all of the array within and find the unique values.
 
 #### Joins and Unions
 
@@ -413,13 +416,13 @@ Spark supports standard join operations:
 Also these other operations:
 - Union
 - Intersect (return records found in all involved select statements)
-- Minus (return records only found in the first table - kinda of like anti join)
+- Minus (return records only found in the first table - kinda of like anti-join)
 - Pivot (to change other data perspective)
 
 
-### Higher order functions and SQL UDFs (user defined functions)
+### Higher-order functions and SQL UDFs (user-defined functions)
 
-Higher order functions help us work with complex data types, such as hierarchical data e.g. arrays and map type objects.
+Higher-order functions help us work with complex data types, such as hierarchical data e.g. arrays and map type objects.
 
 #### FILTER
 
@@ -427,11 +430,11 @@ Filter arrays by using some condition e.g. '>' or '=' etc.
 
 #### TRANSFORM
 
-Apply some sort of transformation for every value in a column for a particular element in the array
+Apply some transformation for every value in a column for a particular element in the array
 
 #### UDF
 
-Create SQL functions (like python function). UDF are permanent objects and are persisted in the database like tables.
+Create SQL functions (like Python functions). UDF are permanent objects and are persisted in the database like tables.
 
 ```
 CREATE OR REPLACE FUNCTION udf_name(parameter data_type)
@@ -477,10 +480,10 @@ A **Data Stream** is any data source that grows over time.
 
 To process a data stream you can:
 1. Reprocess the entire source dataset each time
-2. Only process those new data added since last update
+2. Only process the new data added since the last update
     - Structured streaming
 
-Structured stream is create a stream of data from an source (e.g. input table) to a data sink (e.g. output table).
+A structured stream creates a stream of data from a source (e.g. input table) to a data sink (e.g. output table).
 There will be a trigger which will check the input table for any new data.
 
 For the input table:
@@ -510,17 +513,17 @@ streamDF.writeStream
 
 #### .option()
 
-- Check pointing
+- Checkpointing
     This stores the state of your streaming in cloud storage so that the status of your streaming can be tracked.
     Checkpoints **cannot** be shared between separate streams. A separate location is needed for every writeStream to ensure processing guarantees.
 
     - Guarantees
         1. Fault tolerance (checkpointing + write ahead logs):
-            These two will record which range of data go progressed during each trigger interval.
+            These two will record which range of data progressed during each trigger interval.
             In case of failure, the streaming engine can resume where it left off.
 
         2. Exactly-once guarantee:
-            Idempotent sinks is where multiple writes of the same data do not result in duplicates written to the sink (the output table)
+            Idempotent sinks are where multiple writes of the same data do not result in duplicates written to the sink (the output table)
     
     These guarantees are only possible with repeatable data sources.
 
@@ -542,14 +545,14 @@ There are 2 ways of doing so:
 - ```COPY INTO```
     - Thousands of files
     - Less efficient at scale
-- Auto loader
+- Autoloader
     - Millions of files
     - Efficient at scale
     - The recommended when loading from Cloud Object Storage 
 
 #### COPY INTO
 
-This is a SQL command that loads only the new files from the source location when you run it. The files that have been loaded before are just skipped.
+This is an SQL command that loads only the new files from the source location when you run it. The files that have been loaded before are just skipped.
 
 Example:
 ```
@@ -563,9 +566,9 @@ COPY_OPTIONS ('mergeSchema'='true')
 
 #### Auto loader
 
-Uses structured streaming to process billions of files and support near real time ingestion of millions of files per hour.
+Uses structured streaming to process billions of files and supports near real-time ingestion of millions of files per hour.
 
-Auto loader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance.
+Autoloader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance.
 
 AL in PySparkAPI
 ```
@@ -578,7 +581,7 @@ spark.readStream
         .table(<table_name>)
 ```
 
-AL can automatically infer the structure of the schema of the source table, and can detect any updates to source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.*
+AL can automatically infer the structure of the schema of the source table and can detect any updates to the source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.*
 
 ```
 spark.readStream
@@ -594,17 +597,17 @@ spark.readStream
 
 ### Multi-Hop Architecture (aka Medallion Architecture)
 
-Medallion Architecture is used to logically organise data in a lakehouse, with a goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
+Medallion Architecture is used to logically organise data in a lakehouse, with the goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
 
 ![multi-hop diagram](./databricks_images/Multi-hop.png)
 
-It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data any time.
+It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data at any time.
 
 #### Bronze
 
 Data as is, but include metadata columns such as load date/time, process ID, etc.
 
-The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, audit-ability, reprocessing if needed without rereading the data from the source system (effectively being source data).
+The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in the database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, audit-ability, reprocessing if needed without rereading the data from the source system (effectively being source data).
 
 #### Silver
 
@@ -616,10 +619,10 @@ Data in **Silver** layer is the data from **Bronze** layer matched, merged, conf
 
 ### Delta Live Tables (DLT)
 
-DLT is a framework for building reliable and maintainable data processing pipelines, it provides a Directed Acyclic Graph (DAG) that shows your multi-hop architecture and it's dependencies. They are created by using databricks notebooks. So therefore, instead of using a series of separate Apache Spark tasks, you define the tables you need and DLT manages it for you depending on your input configurations.
+DLT is a framework for building reliable and maintainable data processing pipelines, it provides a Directed Acyclic Graph (DAG) that shows your multi-hop architecture and its dependencies. They are created by using Databricks notebooks. Therefore, instead of using a series of separate Apache Spark tasks, you define the tables you need and DLT manages them for you depending on your input configurations.
 
 - DLT tables will always be proceeded by `LIVE` keyword
-- Incremental processing via auto loader needs `STREAMING` keyword
+- Incremental processing via autoloader needs `STREAMING` keyword
 - Comment is visible to anyone exploring the data catalog
 
 #### Creating new pipeline
@@ -661,7 +664,7 @@ Definition and rules:
 
 A **streaming table** is a Delta Table with extra support for streaming or incremental data processing by allowing you to process a growing dataset, handling each row only once. These tables are designed to need data sources that are append-only.
 
-A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with sheduling. They are powerful because they can handle changes in the source.
+A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with scheduling. They are powerful because they can handle changes in the source.
 
 
 - Table references:
@@ -669,7 +672,7 @@ A **materialized view** is a live table in Databricks. These views are refreshed
     - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
 
 - `ON VIOLATION` constraints:
-    - `DROP ROW`: discards records that violates constraints
+    - `DROP ROW`: discards records that violate constraints
     - `FAIL UPDATE`: violation causes pipeline to fail
     - `OMITTED`: violation records will be kept but reported in metrics
 
@@ -687,14 +690,14 @@ AS
 
 ### Change Data Capture (CDC)
 
-CDC is the process of identifying what has changed in the source and delivering these changes to the target. The changes to be delivered are called CDC feed.zxc
+CDC is the process of identifying what has changed in the source and delivering these changes to the target. The changes to be delivered are called CDC feed.
 
 Changes could be:
 - Inserting new data
 - Updating existing data
 - Deleting existing data
 
-Changes are logged at the source as events that contain both data and metadata information (e.g. the data and also columns describing the change and timestamp)
+Changes are logged at the source as events that contain both data and metadata information (e.g. the data and columns describing the change and timestamp)
 
 #### CDC with Delta Live Tables
 
@@ -708,17 +711,17 @@ COLUMNS * [EXCEPT (column_name,...)]
 ```
 
 - APPLY CHANGES INTO command
-    - target_table = the table which will be receiving the feed and updating it's data. *This table needs to be create already before executing command.*
-    - key_field = primary keys; if key exists in target table, it'll be updated, if not then inserted
+    - target_table = the table which will be receiving the feed and updating its data. *This table needs to be created already before executing the command.*
+    - key_field = primary keys; if the key exists in the target table, it'll be updated, if not then inserted
     - APPLY AS DELETE WHEN = specifies when records should be deleted 
     - sequence_field = 
     - COLUMNS = all the columns that are going to flow through to the target table
 
 |Pros|Cons|
 |---|---|
-|Automatically orders late arriving records using the KEYS provided. Updates and deletions from upstream will be reflected downstream computations.|Since data is being updated and deleted in the target table, this breaks the append-only requirements for streaming table sources. This means we cannot use this target table as a source in the next layer|
+|Automatically orders late-arriving records using the KEYS provided. Updates and deletions from upstream will be reflected in downstream computations.|Since data is being updated and deleted in the target table, this breaks the append-only requirements for streaming table sources. This means we cannot use this target table as a source in the next layer|
 |The default is 'upsert'||
-|Can optionally appy deletes||
+|Can optionally apply deletes||
 |Specify one or more fields as primary key||
 |EXCEPT keyword to specify which columns to ignore||
 |Support SCD Type 1 (default) and SCD Type 2||
@@ -731,7 +734,7 @@ A Databricks job is a way to run your data processing and analysis applications 
 
 ### Databricks SQL (DB SQL)
 
-DB SQL is a serverless datawarehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collborations. 
+DB SQL is a serverless data warehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collaborations. 
 
 It's a way to use it like a SQL Server or Synapse, without having to go through notebooks. 
 
@@ -741,7 +744,7 @@ It's a way to use it like a SQL Server or Synapse, without having to go through 
 
 ### Data Object Privileges
 
-You can programtically set and alter prvileges.
+You can programmatically set and alter privileges.
 
 ```
 GRANT privilege ON object <object_name> TO <user or group>
@@ -760,19 +763,19 @@ operations are:
 
 `privilege` consists of:
 - SELECT: read access to an object
-- MODIFY: add, delete, and modigy data to or from an object
+- MODIFY: add, delete, and modify data to or from an object
 - CREATE: create an object
 - READ_METADATA: view an object and its metadata
 - USAGE: no effect, required to perform any action on a database object
-- ALL PRIVILEGES: self explanatory
+- ALL PRIVILEGES: self-explanatory
 
 `object` specifies access to:
-- CATALOG: to entire catalog
+- CATALOG: to the entire catalog
 - SCHEMAL: to database
-- TABLE: to managed or external table
+- TABLE: to manage or external table
 - VIEW: to SQL view
 - FUNCTION: to named function
-- ANY FILE: to underlying filesystem
+- ANY FILE: to the underlying filesystem
 
 #### Granting privileges by role
 
@@ -781,19 +784,19 @@ operations are:
 
 ### Unity Catalog
 
-Unity catalog is a SQL based centralised governance solution across all your workspaces on any cloud. It provides unified governance for all data and AI assets including:
+Unity catalog is a SQL-based centralised governance solution across all your workspaces on any cloud. It provides unified governance for all data and AI assets including:
 - files,
 - tables,
-- machine leaning models,
+- machine learning models,
 - and dashboards
 
 #### Architecture
 
 ![catalog architecture](./databricks_images/unity%20catalog.png)
 
-This architecture means that Unity Catalog sits outside of the workspace and all user/group management, metastores, and access controls are managed through the account console.
+This architecture means that Unity Catalog sits outside of the workspace and all user/group management, meta stores, and access controls are managed through the account console.
 
-A UC metastore can be assigned to more than one workspace, enabling multiple workspaces to share the same DBFS storage and same access control list.
+A UC meta store can be assigned to more than one workspace, enabling multiple workspaces to share the same DBFS storage and same access control list.
 
 Traditional namespace
 ```
@@ -808,11 +811,11 @@ SELECT * FROM catalog.schema.table
 
 #### Hierarchy
 
-The UC Metastore is the top level container in the unity catalog. It contains information about the objects managed by the metastore and also the access control list that govern access to those objects.
+The UC Metastore is the top-level container in the unity catalog. It contains information about the objects managed by the meta store and also the access control list that govern access to those objects.
 
 **Unity Metastore ≠ Hive Metastore**
 
-Hive metastore is the default metastore linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive metastore. Hive metastore is sometime considered "legacy"
+Hive meta store is the default meta store linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive meta store. Hive meta store is sometime considered "legacy"
 
 ![UC hierarchy](./databricks_images/UC_hierarchy.png)
 
@@ -820,15 +823,15 @@ Hive metastore is the default metastore linked to each Databricks workspace, Uni
 #### Identities
 
 There are 3 types of identities/principals in Unity Catalog:
-- Users: are individual physical users which are identified by email addresses.
-- Service Principals: individual entity for automated tools and systems like scripts, apps, CICD platforms. They are uniquely identified by Application ID.
-    - Databricks recommends using a service principal and it's OAuth token or personal access token instead of your Databricks user account and personal access token.
+- Users: are individual physical users who are identified by email addresses.
+- Service Principals: individual entities for automated tools and systems like scripts, apps, and CICD platforms. They are uniquely identified by Application ID.
+    - Databricks recommends using a service principal and its OAuth token or personal access token instead of your Databricks user account and personal access token.
 - Groups: grouping Users and Service Principals.
 
 
 #### Identity Federation
 
-Identities exists at two levels: account and workspace-level
+Identities exist at two levels: account and workspace-level
 
 Unity Catalog supports Identity Federation, which means you create it in the account console once and it can be assigned to one or more workspaces as necessary.
 
@@ -844,13 +847,13 @@ Unity Catalog supports Identity Federation, which means you create it in the acc
 
 ![Security model](./databricks_images/Security%20Model.png)
 
-Unity Catalog is additive, meaning your legacy Hive metastore is still accessible once Unity Catalog is enabled. You can access it as *hive_metastore* catalog regardless of the Unity Catalog assigned to the workspace. 
+Unity Catalog is additive, meaning your legacy Hive meta store is still accessible once Unity Catalog is enabled. You can access it as a *hive_metastore* catalog regardless of the Unity Catalog assigned to the workspace. 
 
 ![Security model](./databricks_images/legacy.png)
 
 #### Other features
 
-Other than a centralised governance for data and AI, Unity Catalog has a built in data search and discovery. It lets you tag and document data asssets, and provides a search interace to help users find data.
+Other than a centralised governance for data and AI, Unity Catalog has a built-in data search and discovery. It lets you tag and document data assets and provides a search interface to help users find data.
 
 It also provides automated lineage where you can identify the origin of your data and where it is used by capturing and using user-level audit logs that record access to data.
 
