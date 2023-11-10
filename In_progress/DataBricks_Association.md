@@ -23,9 +23,7 @@ Databricks has 3 layers:
 2. Runtime: Apache Spark and Delta Lake
 3. Workspace: Databricks GUI
 
-
 ![architecture](./databricks_images/databricks-architecture-aws.png)
-
 
 
 ### Data resource deployment view
@@ -37,6 +35,9 @@ Databricks has 3 layers:
     - Compute and storage will always be in the customer's account. DB will provide a tool to use and control infrastructure.
     - The data plane lives in the customer's account.
     - Since Apache Spark processes data in a distributed manner, DBricks has native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
+
+![architecture2](./databricks_images/architecture%202.png)
+
 
 ***
 
