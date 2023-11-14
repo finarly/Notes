@@ -442,6 +442,15 @@ Higher-order functions help us work with complex data types, such as hierarchica
 
 Filter arrays by using some condition e.g. '>' or '=' etc.
 
+```
+filter(expr, func)
+```
+
+example:
+```
+SELECT filter(array(1, 2, 3), x -> x % 2 == 1)
+```
+
 #### TRANSFORM
 
 Apply some transformation for every value in a column for a particular element in the array
@@ -527,7 +536,7 @@ streamDF.writeStream
 
 #### .option()
 
-- Checkpointing
+- Checkpointing:
     This stores the state of your streaming in cloud storage so that the status of your streaming can be tracked.
     Checkpoints **cannot** be shared between separate streams. A separate location is needed for every writeStream to ensure processing guarantees.
 
@@ -898,3 +907,13 @@ Other than a centralised governance for data and AI, Unity Catalog has a built-i
 
 It also provides automated lineage where you can identify the origin of your data and where it is used by capturing and using user-level audit logs that record access to data.
 
+## Miscellaneous
+
+### SQL Commands
+
+Similar commands:
+- INSERT INTO: a way to append more data to a table, but this does not prevent duplicates
+- MERGE INTO: this is a way to append more data to a table by combining data from 2 tables while making sure there aren't any duplicates
+- APPLY CHANGES INTO: sets up a CDC feed into a table
+- UPDATE: used together with merge to set the conditions of merging
+- COPY INTO: this is a way to load data incrementally, a weaker version of Auto Loader
