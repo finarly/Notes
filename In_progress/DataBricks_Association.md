@@ -38,6 +38,13 @@ Databricks has 3 layers:
 
 ![architecture2](./databricks_images/architecture%202.png)
 
+### Notebooks
+
+Notebooks are common tools in data science and ML for developing code and presenting results. This is the case so in Databricks as well.
+
+It provides:
+- Real-time coauthoring in multiple languages, automatic versioning, and built0in data visualisations. 
+
 
 ***
 
@@ -113,6 +120,8 @@ CREATE TABLE new_table
 AS SELECT id, name, email, birth_date, city FROM users
 ```
 
+*If table created is from another table, then the new table schema adopts the source table. If it is from a file then the new table infers the schema after scanning.*
+
 #### Table Constraints
 
 - NOT NULL constraints
@@ -183,9 +192,13 @@ The default database location is in the default hive directory: *dbfs:/user/hive
 You can create databases outside of this using **LOCATION** command.
 
 ```
- **LOCATION** 'dbfs:/custom/path/db_y.db
-```
+CREATE SCHEMA db_y
+LOCATION `dbfs:/custom/path/db_y.db`
 
+USE db_y;
+CREATE TABLE table1 
+CREATE TABLE table2
+```
 The 'db' suffix is what lets us know that it is a database.
 
 #### Tables
@@ -200,7 +213,7 @@ There are 2 types of tables:
 - External tables:
     - Created outside the database directory
         -```CREATE TABLE table_name LOCATION `path` ```
-    - The underlying data files will not be deleted when dropping the table.
+    - **The underlying data files will not be deleted when dropping the table.**
 
 
 ### Clusters
@@ -567,9 +580,11 @@ COPY_OPTIONS ('mergeSchema'='true')
 
 #### Auto loader
 
-Uses structured streaming to process billions of files and supports near real-time ingestion of millions of files per hour.
+AL is based on Spark Structured Streaming to process billions of files and supports near real-time ingestion of millions of files per hour as they arrive in **cloud storage**. 
 
-Autoloader uses checkpointing to store metadata of the processed files so that files get processed exactly once and also create fault tolerance.
+Autoloader uses checkpointing (RocksDB, embedded database for key-value storage) to store metadata of the processed files so that files get processed exactly once and also create fault tolerance.
+
+**The inclusion of `.format('cloudFiles')' enables the use of Autoloader.**
 
 AL in PySparkAPI
 ```
@@ -582,7 +597,7 @@ spark.readStream
         .table(<table_name>)
 ```
 
-AL can automatically infer the structure of the schema of the source table and can detect any updates to the source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. *This location can be the same as the checkpoint location.*
+AL can automatically infer the structure of the schema of the source table and can detect any updates to the source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. **This location can be the same as the checkpoint location.**
 
 ```
 spark.readStream
@@ -604,15 +619,20 @@ Medallion Architecture is used to logically organise data in a lakehouse, with t
 
 It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data at any time.
 
-#### Bronze
+#### Bronze (raw)
 
 Data as is, but include metadata columns such as load date/time, process ID, etc.
 
 The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in the database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, audit-ability, reprocessing if needed without rereading the data from the source system (effectively being source data).
 
-#### Silver
+#### Silver (cleansed and conformed data)
 
 Data in **Silver** layer is the data from **Bronze** layer matched, merged, conformed, and cleansed (just enough) so that this layer can provide an "Enterprise View" of all its key business entities, concepts, and transactions (e.g. master customers, stores etc.)
+
+At this layer you are providing clean foundational data that enables self service, and serves as the source of analysts, Data Engineers, and Data Scientists to create their projects. This is layer should provide an "Enterprise VIew".  
+
+
+#### Gold (curated business-level tables)
 
 ***
 
@@ -661,6 +681,18 @@ AS
     ON o.customer_id = c.customer_id
 ```
 
+#### Gold tables
+
+```
+CREATE OR REFRESH LIVE TABLE cn_daily_customer_books
+COMMENT "Daily number of books per customer in China"
+AS
+  SELECT customer_id, f_name, l_name, date_trunc("DD", order_timestamp) order_date, sum(quantity) books_counts
+  FROM LIVE.orders_cleaned
+  WHERE country = "China"
+  GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
+```
+
 Definition and rules:
 
 A **streaming table** is a Delta Table with extra support for streaming or incremental data processing by allowing you to process a growing dataset, handling each row only once. These tables are designed to need data sources that are append-only.
@@ -673,21 +705,18 @@ A **materialized view** is a live table in Databricks. These views are refreshed
     - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
 
 - `ON VIOLATION` constraints:
+    - ` `: if you don't provide a violation result, records will be kept but reported in event log. This is the default. 
     - `DROP ROW`: discards records that violate constraints
     - `FAIL UPDATE`: violation causes pipeline to fail
-    - `OMITTED`: violation records will be kept but reported in metrics
 
-#### Gold tables
 
-```
-CREATE OR REFRESH LIVE TABLE cn_daily_customer_books
-COMMENT "Daily number of books per customer in China"
-AS
-  SELECT customer_id, f_name, l_name, date_trunc("DD", order_timestamp) order_date, sum(quantity) books_counts
-  FROM LIVE.orders_cleaned
-  WHERE country = "China"
-  GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
-```
+#### Development vs Production
+
+There is a toggle in the UI for DLT which controls whether your pipeline updates runs in development or in production mode. Toggle to development when deploying to dev environment and to production when deploying to a production environment.
+
+In development mode:
+- The compute resources does not get immediately terminated after a update succeeds or fails. The same compute can be reused to make multiple updates of the pipeline without waiting for a cluster to start
+- It does not automatically retry task failure, allow you to immediately detect and fix logical or syntactic errors in your pipeline. 
 
 ### Change Data Capture (CDC)
 
@@ -732,6 +761,17 @@ COLUMNS * [EXCEPT (column_name,...)]
 ### Jobs
 
 A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies. Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
+
+#### Email and System notification
+
+You can configure job events (starts, completes, fails, exceeds duration)to send notifications to you.
+
+You can configure it to send emails to particular individuals. It can also integrate with tools such as:
+- Slack
+- PagerDuty
+- Microsoft Teams 
+- HTTP webhook
+
 
 ### Databricks SQL (DB SQL)
 
