@@ -1,4 +1,4 @@
-l# DataBricks Learning
+# DataBricks Learning
 
 ## Overview
 
@@ -46,17 +46,35 @@ It provides:
 - Real-time coauthoring in multiple languages, automatic versioning, and built0in data visualisations. 
 
 
+
+
+### Repo
+
+Databricks Repos provide source control for projects by integrating with Git. Functionalities include:
+- Clone, push, and pull
+- Create and manage branches for dev, including merging, rebasing, and resolving conflicts
+- Create notebooks and other files
+- Visually compare difference during merge conflicts. **NOT RESOLUTION**
+
+**Note you cannot delete branches**
+
+Providers:
+- GitHub
+- Bitbucket Cloud
+- GitLab 
+- Azure DevOps
+- AWS CodeCommit
+- GitHub AE
+
 ***
 
-## Databricks Lake-house Platform
+## Databricks Lake-house Platform - Delta Lake
 
 Delta lake is an open-source software that provides the foundation for storing data and tables in Databricks. It extends parquet data files with a file-based *transaction log* for ACID transactions and scalable metadata handling. All tables on Databricks are Delta tables unless otherwise specified. 
 
 It is a storage framework that helps data lakes become lake house.
 
 The data held in delta tables are stored in one or more files in parquet format, alongside a **Transaction Log**.
-
-### Delta Lake
 
 ### Transaction log
 
@@ -69,7 +87,7 @@ This JSON file has ordered records of every transaction performed on the table. 
 In Databricks, every iteration of the table is versioned, this allows you to look back in time of a table.
 
 To see the history of a table:
-> DESCRIBE HISTORY
+```DESCRIBE HISTORY```
 
 To read the table at a particular point:
 
@@ -109,6 +127,19 @@ Note: if you vacuumed, then you cannot perform time travel.
 
 
 ### Setting up Delta Tables
+
+To see the metadata in an existing database (schema): 
+- ```DESCRIBE DATABASE database_name```
+or
+- ```DESCRIBE SCHEMA [EXTENDED] database_name```
+
+The metadata includes:
+- name
+- comment
+- location
+- properties (if ```EXTENDED``` is specified) 
+
+**Because in hive metastore, a database is a schema**
 
 #### Create Table AS (CTAS)
 
@@ -781,11 +812,22 @@ You can configure it to send emails to particular individuals. It can also integ
 - HTTP webhook
 
 
-### Databricks SQL (DB SQL)
+### Databricks SQL (DB SQL) - SQL warehouse - SQL endpoint
 
 DB SQL is a serverless data warehouse on the Databricks Lakehouse Platform, it has an in-platform SQL editor and dashboard tools allowing collaborations. 
 
 It's a way to use it like a SQL Server or Synapse, without having to go through notebooks. 
+
+When you're create a warehouse cluster these things can be customised:
+- Cluster size (default is X-large): to reduce latency increase the size
+-  Auto Stop: determines whether the warehouse stops of it is idle after X minutes. 
+    - Pro and Classic SQL warehouses: Default 45 mins, minimum 10mins.
+    - Serverless SQL: Default 10 mins, minimum 5mins when using UI. 
+- Scaling: sets min/max clusters used for a query. Default min/max is 1.
+    - Pro and Classic: 1 cluster every 10 concurrent queries 
+- Type: determines type of warehouse, severless is default.
+
+*Severless compute for SQL warehouses mean that the compute layer exists in your Databricks Account rather than your own AWS account* 
 
 ***
 
