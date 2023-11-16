@@ -640,7 +640,6 @@ Data in **Silver** layer is the data from **Bronze** layer matched, merged, conf
 
 At this layer you are providing clean foundational data that enables self service, and serves as the source of analysts, Data Engineers, and Data Scientists to create their projects. This is layer should provide an "Enterprise VIew".  
 
-
 #### Gold (curated business-level tables)
 
 ***
@@ -869,7 +868,6 @@ Hive meta store is the default meta store linked to each Databricks workspace, U
 
 ![UC hierarchy](./databricks_images/UC_hierarchy.png)
 
-
 #### Identities
 
 There are 3 types of identities/principals in Unity Catalog:
@@ -877,7 +875,6 @@ There are 3 types of identities/principals in Unity Catalog:
 - Service Principals: individual entities for automated tools and systems like scripts, apps, and CICD platforms. They are uniquely identified by Application ID.
     - Databricks recommends using a service principal and its OAuth token or personal access token instead of your Databricks user account and personal access token.
 - Groups: grouping Users and Service Principals.
-
 
 #### Identity Federation
 
