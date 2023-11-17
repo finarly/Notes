@@ -43,10 +43,7 @@ Databricks has 3 layers:
 Notebooks are common tools in data science and ML for developing code and presenting results. This is the case so in Databricks as well.
 
 It provides:
-- Real-time coauthoring in multiple languages, automatic versioning, and built0in data visualisations. 
-
-
-
+- Real-time coauthoring in multiple languages, automatic versioning, and builtin data visualisations. 
 
 ### Repo
 
@@ -152,18 +149,6 @@ AS SELECT id, name, email, birth_date, city FROM users
 ```
 
 *If table created is from another table, then the new table schema adopts the source table. If it is from a file then the new table infers the schema after scanning.*
-
-#### Table Constraints
-
-- NOT NULL constraints
-- CHECK constraints
-
-General format:
-```ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details```
-
-Example:
-```ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')```
-
 
 #### Cloning Delta Lake Tables
 
@@ -665,6 +650,12 @@ Data as is, but include metadata columns such as load date/time, process ID, etc
 
 The purpose of this layer is quick Change Data Capture (the process of identifying and capturing changes made to data in the database and then delivering those changes in real-time to a downstream process or system), provide archive/cold storage, data lineage, audit-ability, reprocessing if needed without rereading the data from the source system (effectively being source data).
 
+Quality summary:
+- Raw copy of ingested data
+- Replaces traditional data lake
+- Provides efficient storage and querying of full, unprocessed history of data
+- No schema is applied at this layer
+
 #### Silver (cleansed and conformed data)
 
 Data in **Silver** layer is the data from **Bronze** layer matched, merged, conformed, and cleansed (just enough) so that this layer can provide an "Enterprise View" of all its key business entities, concepts, and transactions (e.g. master customers, stores etc.)
@@ -689,7 +680,7 @@ DLT is a framework for building reliable and maintainable data processing pipeli
 
 Click "Workflows" > select "Delta Live Tables" tab > "Create pipeline"
 
-#### Bronze tables
+#### Bronze tables examples
 
 ```
 CREATE OR REFRESH STREAMING LIVE TABLE orders_raw
@@ -704,7 +695,7 @@ COMMENT "The customers lookup table, ingested from customers-json"
 AS SELECT * FROM json.`${datasets_path}/customers-json`
 ```
 
-#### Silver tables
+#### Silver tables examples
 
 ```
 CREATE OR REFRESH STREAMING LIVE TABLE orders_cleaned (
@@ -720,7 +711,7 @@ AS
     ON o.customer_id = c.customer_id
 ```
 
-#### Gold tables
+#### Gold tables examples
 
 ```
 CREATE OR REFRESH LIVE TABLE cn_daily_customer_books
@@ -738,17 +729,39 @@ A **streaming table** is a Delta Table with extra support for streaming or incre
 
 A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with scheduling. They are powerful because they can handle changes in the source.
 
-
 - Table references:
     - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
     - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
+
+
+### Constraints, Violations, Expectations
+
+Databricks supports standard SQL constraint clauses and all contraints require Delta Lake. There are 2 categories of constraints:
+- Enforced constraints maintains integrity of data
+- Informational primary-foreign key constraints are not enforced. 
+
+
+#### Enforced Constraints
+- NOT NULL constraints
+- CHECK constraints
+
+General format:
+```ALTER TABLE table_name ADD CONSTRAINT constraint_name constraint_details```
+
+Example 1:
+```ALTER TABLE orders ADD CONSTRAINT validate CHECK (date > '2020-01-01')```
+
+Example 2:
+```ALTER TABLE ```
+
 
 - `ON VIOLATION` constraints:
     - ` `: if you don't provide a violation result, records will be kept but reported in event log. This is the default. 
     - `DROP ROW`: discards records that violate constraints
     - `FAIL UPDATE`: violation causes pipeline to fail
 
-
+- Expectations:
+    - You can create
 #### Development vs Production
 
 There is a toggle in the UI for DLT which controls whether your pipeline updates runs in development or in production mode. Toggle to development when deploying to dev environment and to production when deploying to a production environment.
@@ -799,7 +812,9 @@ COLUMNS * [EXCEPT (column_name,...)]
 
 ### Jobs
 
-A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies. Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
+A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies. 
+
+Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
 
 #### Email and System notification
 
@@ -828,6 +843,8 @@ When you're create a warehouse cluster these things can be customised:
 - Type: determines type of warehouse, severless is default.
 
 *Severless compute for SQL warehouses mean that the compute layer exists in your Databricks Account rather than your own AWS account* 
+
+*A cluster comprises of a driver node and one or many worker nodes*
 
 ***
 
@@ -868,6 +885,12 @@ operations are:
 - FUNCTION: to named function
 - ANY FILE: to the underlying filesystem
 
+To change object ownership you can run:
+
+```
+ALTER object OWNER to `username@domain.com`
+```
+
 #### Granting privileges by role
 
 ![role privileges](./databricks_images/privileges_role.png)
@@ -881,11 +904,13 @@ Unity catalog is a SQL-based centralised governance solution across all your wor
 - machine learning models,
 - and dashboards
 
+**The UI of Unity Catalog is also referred to as Data Explorer**
+
 #### Architecture
 
 ![catalog architecture](./databricks_images/unity%20catalog.png)
 
-This architecture means that Unity Catalog sits outside of the workspace and all user/group management, meta stores, and access controls are managed through the account console.
+This architecture means that Unity Catalog sits outside of the workspace and all user/group management, meta stores, and access controls are managed through the account console. It manages at an account level. 
 
 A UC meta store can be assigned to more than one workspace, enabling multiple workspaces to share the same DBFS storage and same access control list.
 
