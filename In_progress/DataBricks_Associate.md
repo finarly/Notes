@@ -744,7 +744,12 @@ DLT is a framework for building reliable and maintainable data processing pipeli
 - Incremental processing via Auto Loader needs `STREAMING` keyword
 - Comment is visible to anyone exploring the data catalog
 
+#### Delta Live Table Pipelines
 
+- Can either be run:
+    - Triggered
+    - Continuous
+    
 #### Terms, Definitions and Rules:
 
 Terms:
