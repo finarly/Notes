@@ -45,6 +45,18 @@ Notebooks are common tools in data science and ML for developing code and presen
 It provides:
 - Real-time coauthoring in multiple languages, automatic versioning, and builtin data visualisations. 
 
+#### Databricks Widgets
+
+You can add parameters to your notebooks and dashboards using widgets. Widgets are best for
+- Building a notebook or dashboard that is re-executed with different parameters
+- Quickly exploring results of a single query with different parameters
+
+Types: 
+- text: input text
+- dropdown: select provided
+- combobox: text + dropdown
+- multi-select: select one or more values provided 
+
 ### Repo
 
 Databricks Repos provide source control for projects by integrating with Git. Functionalities include:
@@ -307,6 +319,20 @@ OPTIONS (key1 = val1,key2=val2,...)
 LOCATION = path
 ```
 
+`data_source` must be:
+- AVRO
+- BINARYFILE
+- CSV
+- DELTA
+- JSON
+- ORC
+- PARQUET
+- TEXT
+
+**If USING is omitted, the default is DELTA.**
+
+*For any data_source other than DELTA you must also specify a LOCATION unless the table catalog is hive_metastore.* 
+
 With these commands we always create an external table, therefore we are just pointing to files. The tables created are **non-delta tables**. The limitation here is that since it is not a delta table, there is no reliability guarantee.
 
 The solution to this problem is:
@@ -532,6 +558,12 @@ streamDF = spark.readStream
                 .table("Input_Table")
 ```
 
+or 
+
+```
+spark.readStream.load("/path/to/table")
+```
+
 For the output table:
 
 ```
@@ -627,7 +659,7 @@ spark.readStream
         .table(<table_name>)
 ```
 
-AL can automatically infer the structure of the schema of the source table and can detect any updates to the source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema to be used later. **This location can be the same as the checkpoint location.**
+AL can automatically infer the structure of the schema of the source table and can detect any updates to the source structure. If you don't want this cost to happen at every startup of the stream, you can store the inferred schema so instead of inferring which incurs a cost, it can just look at this stored data. **This location can be the same as the checkpoint location.**
 
 ```
 spark.readStream
@@ -675,7 +707,22 @@ Data in **Silver** layer is the data from **Bronze** layer matched, merged, conf
 
 At this layer you are providing clean foundational data that enables self service, and serves as the source of analysts, Data Engineers, and Data Scientists to create their projects. This is layer should provide an "Enterprise VIew".  
 
+Quality summary: 
+- Reduces data storage complexity, latency, and redundency
+- Optimises ETL throughput and analytic query performance 
+- Preserves grain of original data (without aggregation)
+- Eliminate duplicate records
+- Production schema enforced
+- Data quality checks, quarantine corrupt data
+
 #### Gold (curated business-level tables)
+
+Quality summary:
+- Powers ML applications, reporting, dashboards, ad-hoc analysis
+- Refined views of data, typically with aggergations
+- Reduces straing on production systems
+- Optimises query performance for business-critical data 
+
 
 ***
 
@@ -686,7 +733,7 @@ At this layer you are providing clean foundational data that enables self servic
 DLT is a framework for building reliable and maintainable data processing pipelines, it provides a Directed Acyclic Graph (DAG) that shows your multi-hop architecture and its dependencies. They are created by using Databricks notebooks. Therefore, instead of using a series of separate Apache Spark tasks, you define the tables you need and DLT manages them for you depending on your input configurations.
 
 - DLT tables will always be proceeded by `LIVE` keyword
-- Incremental processing via autoloader needs `STREAMING` keyword
+- Incremental processing via Auto Loader needs `STREAMING` keyword
 - Comment is visible to anyone exploring the data catalog
 
 #### Creating new pipeline
