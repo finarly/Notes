@@ -643,7 +643,11 @@ spark.readStream
 
 #### File detection: Directory listing mode
 
+It lists the directory and maintains the state in RocksDB, supports incremental file listing
 
+#### File detection: File notification
+
+In this mode Auto Loader automatically sets up a notification service and queue that subscribes to file events in the input direct. Compared to directory listing, file notification is more perfomant and scalable for large input directories, but it requires more cloud permissions.
 
 ### Multi-Hop Architecture (aka Medallion Architecture)
 
