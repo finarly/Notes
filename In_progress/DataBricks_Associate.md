@@ -749,7 +749,7 @@ DLT is a framework for building reliable and maintainable data processing pipeli
 - Can either be run:
     - Triggered
     - Continuous
-    
+
 #### Terms, Definitions and Rules:
 
 Terms:
@@ -894,6 +894,23 @@ COLUMNS * [EXCEPT (column_name,...)]
 
 A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies (can set a job to depend on another job). Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
 
+
+#### Source
+
+The type of a Job can be:
+- Notebook
+- Python script
+- Python Wheel
+- SQL 
+- DLT live pipeline
+- dbt
+- JAR
+- Spark Submit
+
+The source can either be:
+- Notebook 
+- GIT (notebook in GIT)
+
 #### Retry policy
 
 You can assign retry policies to retry a task that has failed, this is helpful especially when using spot instances as it is common for it to drop. 
@@ -928,6 +945,10 @@ When you're create a warehouse cluster these things can be customised:
 
 *A cluster comprises of a driver node and one or many worker nodes*
 
+
+#### SQL warehouse Dashboards
+
+You can create multiple visualisations off of 1 query (e.g. a query output can be shown in a pie chart or bar chart.zxc )
 ***
 
 ## Data Governance
