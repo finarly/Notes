@@ -821,17 +821,11 @@ COLUMNS * [EXCEPT (column_name,...)]
 
 ### Jobs
 
-<<<<<<< HEAD
-A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies. 
-
-Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
-=======
 A Databricks job is a way to run your data processing and analysis applications in a Databricks workspace. Your job can consist of a single task or can be a large, multi-task workflow with complex dependencies (can set a job to depend on another job). Databricks manages the task orchestration, cluster management, monitoring, and error reporting for all of your jobs. You can run your jobs immediately, periodically through an easy-to-use scheduling system, whenever new files arrive in an external location, or continuously to ensure an instance of the job is always running. You can also run jobs interactively in the notebook UI.
 
 #### Retry policy
 
 You can assign retry policies to retry a task that has failed, this is helpful especially when using spot instances as it is common for it to drop. 
->>>>>>> a2f2192 (update)
 
 #### Email and System notification
 
