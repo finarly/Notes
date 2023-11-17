@@ -15,6 +15,14 @@ It supports all languages supported by Spark:
 - R
 - Java
 
+### Bounded vs Unbounded data
+
+Bounded datasets which are finite and unchanging. For example sales data, there is a timebox and there are results. Typically bounded data are backwards looking, and you try to find patterns in the data to bring forth value. 
+
+Unbounded datasets are unpredictable and infinite. It is created in real time, for example like network traffic logs, it comes in real time, when there is more traffic, more is generated, and when there is less, less is generated. 
+
+Using a personal example, dealing with bounded data is like meditating on things that has happened in during the day, and bounded data is like crossing the road where there is a stream of information coming in in real time. 
+
 ### Layout
 
 Databricks has 3 layers: 
@@ -736,6 +744,24 @@ DLT is a framework for building reliable and maintainable data processing pipeli
 - Incremental processing via Auto Loader needs `STREAMING` keyword
 - Comment is visible to anyone exploring the data catalog
 
+
+#### Terms, Definitions and Rules:
+
+Terms:
+- **Streaming**: is a processing paradigm in which datasets are treated as unbounded.
+- **Incremental**: is an update patter nin which minimal changes are made to the destination data.
+- **Continuous**: refers to a pipeline that is always running until it is stopped at an arbitrary time.
+
+
+A **streaming table** is a Delta Table with extra support for streaming or incremental data processing by allowing you to process a growing dataset, handling each row only once. These tables are designed to need data sources that are append-only.
+
+A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with scheduling. They are powerful because they can handle changes in the source.
+
+- Table references:
+    - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
+    - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
+
+
 #### Creating new pipeline
 
 Click "Workflows" > select "Delta Live Tables" tab > "Create pipeline"
@@ -782,17 +808,6 @@ AS
   WHERE country = "China"
   GROUP BY customer_id, f_name, l_name, date_trunc("DD", order_timestamp)
 ```
-
-Definition and rules:
-
-A **streaming table** is a Delta Table with extra support for streaming or incremental data processing by allowing you to process a growing dataset, handling each row only once. These tables are designed to need data sources that are append-only.
-
-A **materialized view** is a live table in Databricks. These views are refreshed according to the update schedule of the pipeline in which they are contained. DLT abstracts away complexities associated with dealing with scheduling. They are powerful because they can handle changes in the source.
-
-- Table references:
-    - `LIVE` keyword must be used to refer to other DLT tables (e.g. `LIVE.table_name`)
-    - `STREAMING` keyword must be used to refer to streaming tables (e.g. `STREAM(LIVE.table_name)`)
-
 
 ### Constraints, Violations, Expectations
 
