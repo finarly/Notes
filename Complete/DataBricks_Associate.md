@@ -31,7 +31,7 @@ Databricks has 3 layers:
 2. Runtime: Apache Spark and Delta Lake
 3. Workspace: Databricks GUI
 
-![architecture](./databricks_images/databricks-architecture-aws.png)
+![architecture](../Images/databricks_images/databricks-architecture-aws.png)
 
 
 ### Data resource deployment view
@@ -44,7 +44,7 @@ Databricks has 3 layers:
     - The data plane lives in the customer's account.
     - Since Apache Spark processes data in a distributed manner, DBricks has native support of a distributed file system. It is just an abstraction layer, in actuality the data is just stored in Cloud Storage (e.g. S3)
 
-![architecture2](./databricks_images/architecture%202.png)
+![architecture2](../Images/databricks_images/architecture%202.png)
 
 ### Notebooks
 
@@ -292,7 +292,7 @@ Cluster policies can:
 - Prevent excessive use and control cost
 - Enforce correct tagging
 
-![role privileges](./databricks_images/cluster_ac.png)
+![role privileges](../Images/databricks_images/cluster_ac.png)
 
 ***
 
@@ -300,7 +300,7 @@ Cluster policies can:
 
 ### Querying files
 
-![query diagram](./databricks_images/Screenshot%202023-11-01%20000422.png)
+![query diagram](../Images/databricks_images/Screenshot%202023-11-01%20000422.png)
 
 
 Extract as raw strings - when working with text-based files (e.g. JSON, CSV, TSV, and TXT)
@@ -584,11 +584,11 @@ streamDF.writeStream
 
 #### .trigger()
 
-![triggers](./databricks_images/trigger.png)
+![triggers](../Images/databricks_images/trigger.png)
 
 #### .outputModes()
 
-![output_modes](./databricks_images/output.png)
+![output_modes](../Images/databricks_images/output.png)
 
 #### .option()
 
@@ -693,7 +693,7 @@ In this mode Auto Loader automatically sets up a notification service and queue 
 
 Medallion Architecture is used to logically organise data in a lakehouse, with the goal of incrementally improving the structure and quality of data as it flows through each layer (bronze->silver->gold) of the architecture.
 
-![multi-hop diagram](./databricks_images/Multi-hop.png)
+![multi-hop diagram](../Images/databricks_images/Multi-hop.png)
 
 It is a simple data model that enables incremental ETL and can combine streaming and batch workloads in one pipeline. You can recreate your tables from raw data at any time.
 
@@ -716,7 +716,7 @@ Data in **Silver** layer is the data from **Bronze** layer matched, merged, conf
 At this layer you are providing clean foundational data that enables self service, and serves as the source of analysts, Data Engineers, and Data Scientists to create their projects. This is layer should provide an "Enterprise VIew".  
 
 Quality summary: 
-- Reduces data storage complexity, latency, and redundency
+- Reduces data storage complexity, latency, and redundancy
 - Optimises ETL throughput and analytic query performance 
 - Preserves grain of original data (without aggregation)
 - Eliminate duplicate records
@@ -816,7 +816,7 @@ AS
 
 ### Constraints, Violations, Expectations
 
-Databricks supports standard SQL constraint clauses and all contraints require Delta Lake. There are 2 categories of constraints:
+Databricks supports standard SQL constraint clauses and all constraints require Delta Lake. There are 2 categories of constraints:
 - Enforced constraints maintains integrity of data
 - Informational primary-foreign key constraints are not enforced. 
 
@@ -842,6 +842,7 @@ Example 2:
 
 - Expectations:
     - You can create
+
 #### Development vs Production
 
 There is a toggle in the UI for DLT which controls whether your pipeline updates runs in development or in production mode. Toggle to development when deploying to dev environment and to production when deploying to a production environment.
@@ -875,7 +876,7 @@ COLUMNS * [EXCEPT (column_name,...)]
 - APPLY CHANGES INTO command
     - target_table = the table which will be receiving the feed and updating its data. *This table needs to be created already before executing the command.*
     - key_field = primary keys; if the key exists in the target table, it'll be updated, if not then inserted
-    - APPLY AS DELETE WHEN = specifies when records should be deleted 
+    - APPLY AS DELETE WHEN = specifies when records should be deleted
     - sequence_field = 
     - COLUMNS = all the columns that are going to flow through to the target table
 
@@ -996,7 +997,7 @@ ALTER object OWNER to `username@domain.com`
 
 #### Granting privileges by role
 
-![role privileges](./databricks_images/privileges_role.png)
+![role privileges](../Images/databricks_images/privileges_role.png)
 
 
 ### Unity Catalog
@@ -1011,7 +1012,7 @@ Unity catalog is a SQL-based centralised governance solution across all your wor
 
 #### Architecture
 
-![catalog architecture](./databricks_images/unity%20catalog.png)
+![catalog architecture](../Images/databricks_images/unity%20catalog.png)
 
 This architecture means that Unity Catalog sits outside of the workspace and all user/group management, meta stores, and access controls are managed through the account console. It manages at an account level. 
 
@@ -1036,7 +1037,7 @@ The UC Metastore is the top-level container in the unity catalog. It contains in
 
 Hive meta store is the default meta store linked to each Databricks workspace, Unity Catalog metastore offers improved security and advanced features. It's like a more powerful version of Hive meta store. Hive meta store is sometime considered "legacy"
 
-![UC hierarchy](./databricks_images/UC_hierarchy.png)
+![UC hierarchy](../Images/databricks_images/UC_hierarchy.png)
 
 #### Identities
 
@@ -1062,11 +1063,11 @@ Unity Catalog supports Identity Federation, which means you create it in the acc
 
 #### Security Model Summary
 
-![Security model](./databricks_images/Security%20Model.png)
+![Security model](../Images/databricks_images/Security%20Model.png)
 
 Unity Catalog is additive, meaning your legacy Hive meta store is still accessible once Unity Catalog is enabled. You can access it as a *hive_metastore* catalog regardless of the Unity Catalog assigned to the workspace. 
 
-![Security model](./databricks_images/legacy.png)
+![Security model](../Images/databricks_images/legacy.png)
 
 #### Other features
 
