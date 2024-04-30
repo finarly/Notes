@@ -49,6 +49,12 @@ When all concepts below are combined together, you have a `workflow`.
 
 `Directed Acyclic Graph` there's nodes and edges and no cycles. 
 
+#### Components
+
+Nodes: these are your tasks
+
+Edges: these are your dependencies between tasks 
+
 ### Operator
 
 Pre-defined task where you can string together quickly to build most parts of your DAG.
@@ -65,9 +71,24 @@ Allows transferral of data from point A to point B, e.g MySQL to Redshift.
 
 Special type of operator that is designed for one thing - to wait for something to occur. It can be time-based, or waiting for a file, or an external event, but they all wait for something to happen, and then *succeeds* so their downstream tasks can run. 
 
+Since they are mostly idle, Sensors have 2 different modes to make them more efficient:
+
+- `poke` (default): The Sensor takes up a worker slot for its entire runtime. Something that is checking every second should be this mode. 
+- `reschedule`: The Sensor takes up a worker slot only when it is checking, and sleeps for a set duration between checks. Something that is every minute should be in this mode. 
+
+##### Sensor Operator: timeout
+
+
+
 #### Task/Task Instance
 
 An `operator` is a `task`, and when you run a `task`, you get a `task instance`.
+
+#### Do's/Dont's
+
+Don't put 2 tasks in one operator, if your second one fails then you'll need to run the first tasks again.
+
+Do put then in 2 dependent operators. 
 
 ## Architectures
 
@@ -97,3 +118,15 @@ To run Airflow in prod, you don't want a single-node Architecture as that might 
     - Airflow Worker: pulls work from Queue. 
 
 With this architecture, if you need more execute resources, just add more Worker Nodes on a new machine. You should have at least 2 `Schedulers`, 2 `Web-Servers`, maybe a Load Balancer in from of your `Web-Servers` to deal with requests to Airflow UI, as well as a `PGBouncer` as a database proxy to deal with the number of connections that will be made to your `metastore`. 
+
+### Providers
+
+Airflow being built in a modular way means that when you install airflow, you only get the core functionalities. The full capability of Apache Airflow can be extended by installing packages called `providers`.
+
+
+## Tips
+
+### Adding tasks to DAG
+
+Log into the airflow scheduler and run the tasks before you add it into your dag to make sure it works
+
