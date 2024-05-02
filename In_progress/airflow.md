@@ -40,7 +40,6 @@ Tasks will be pushed into the `queue` so they can be executed in the right order
 
 The `worker` is where the tasks are executed. 
 
-
 ## Core Concepts
 
 When all concepts below are combined together, you have a `workflow`.
@@ -69,6 +68,14 @@ Special type of operator that is designed for one thing - to wait for something 
 
 An `operator` is a `task`, and when you run a `task`, you get a `task instance`.
 
+### Connections & Hooks
+
+Airflow is often used to pull and push data into ther systems, and so it has a first-class `Connection` concept for storing credentials that are used to talk to external systems. A `Connection` are a set of parameters (username, password, hostname etc.) and a unique name, called the `conn_id`.
+
+#### Hooks
+
+Hooks are high level interfaces to an external platfrom that lets you quickly and easily talk to them without having to write low_level code that hits their API or uses special libraries. They are the building blocks of what Operators are build of. 
+
 ## Architectures
 
 ### Single-node Architecture
@@ -77,7 +84,7 @@ Where you have a machine or node where the `web-server`, `meta-database/metastor
 
 ![single_node](../Images/single_node.png)
 
-Everything communicates with the `metadatabase` 
+Everything communicates with the `metadatabase`.
 
 ### Multi-node Architecture
 
@@ -96,4 +103,5 @@ To run Airflow in prod, you don't want a single-node Architecture as that might 
 - Worker Node 1/2/3:
     - Airflow Worker: pulls work from Queue. 
 
-With this architecture, if you need more execute resources, just add more Worker Nodes on a new machine. You should have at least 2 `Schedulers`, 2 `Web-Servers`, maybe a Load Balancer in from of your `Web-Servers` to deal with requests to Airflow UI, as well as a `PGBouncer` as a database proxy to deal with the number of connections that will be made to your `metastore`. 
+With this architecture, if you need more execute resources, just add more Worker Nodes on a new machine. You should have at least 2 `Schedulers`, 2 `Web-Servers`, maybe a Load Balancer in from of your `Web-Servers` to deal with requests to Airflow UI, as well as a `PGBouncer` as a database proxy to deal with the number of connections that will be made to your `metastore`.
+
