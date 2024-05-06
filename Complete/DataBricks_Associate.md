@@ -21,7 +21,7 @@ Bounded datasets which are finite and unchanging. For example sales data, there 
 
 Unbounded datasets are unpredictable and infinite. It is created in real time, for example like network traffic logs, it comes in real time, when there is more traffic, more is generated, and when there is less, less is generated. 
 
-Using a personal example, dealing with bounded data is like meditating on things that has happened in during the day, and bounded data is like crossing the road where there is a stream of information coming in in real time. 
+Using a personal example, dealing with bounded data is like meditating on things that has happened in during the day, and unbounded data is like crossing the road where there is a stream of information coming in in real time. 
 
 ### Layout
 
