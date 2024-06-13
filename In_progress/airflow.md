@@ -2,7 +2,6 @@
 
 Airflow is a orchestrator. It is currently not a streaming solution and is not a data processing framework in a sense you shouldn't process anything in Airflow, you just use it to trigger other tools which will do so.
 
-
 ## Core Components
 
 ### Web Server
@@ -192,6 +191,38 @@ To configure which one to use, you'll just need to change the executor parameter
 ### Queues
 
 Queues allow you to distribute your tasks among multiple machines (workers) according to specifications of your tasks and the machine (worker). 
+
+## TaskGroups
+
+New concept which replaced Sub DAGS. A `TaskGroup` can be used to organise tasks into hierarchical groups in Graph View, it is useful for creating repeating patterns and cutting down visual clutter. 
+
+Unlike SubDAGS, TaskGroups are purely a UI grouping concepts. Tasks in TaskGroups live on the same original DAG, and all DAG settings and pool configurations apply to it.
+
+## XCom
+
+XComs (short for cross-communications) are a mechanism that let Tasks talk to each other, as by default they're isolated. They are designed to for small amounts of data (like metadata), so do not use them to pass large values. Instead use a database.
+
+They are explicitly "pushed" and "pulled" to/from their storage using `xcom_push` and `xcom_pull`.
+
+## Branch Operators
+
+There's a condition in these operators, depending on the output of the condition, it'll execute different downstream tasks.
+
+## Trigger rules
+
+All operators have trigger_rule arguments wby which the gernated task get triggered. The default is `all_success`. 
+
+The rules are:
+    - `all_success`: (default) all parents have succeeded.
+    - `all_failed`: all parents are in a `failed` or `upstream_failed` state.
+    - `all_done`: all parents are done with their execution.
+    - `one_failed`: fires as soon as at least one parent has fialed, it does not wait for all parents to be done.
+    - `one_success`: fires as soon as at least one parents succeeds, it does not wait for all parents to be done. 
+    - `none_failed`: all parents have not failed (`failed` or `upstream_failed`) i.e. all parents have succeeded or been skipped.
+    - `none_failed_min_one_success`: all upstream tasks have not `failed` or `upstrea_failed` and at least one upstream task has succeeded. 
+    - `dummy`: dependencies are just for show, trigger at will. 
+
+
 
 ## Tips
 
